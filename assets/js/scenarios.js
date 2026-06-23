@@ -1,33 +1,42 @@
+// ============================================================
+// LajuAman — Data Layer
+// Game Edukasi Keselamatan Lalu Lintas
+// PPKLAJ Provinsi Jawa Tengah 2026
+// ============================================================
+
 // Level Data
 const LEVELS = [
-    { name: "Pesepeda",    minPoin: 0   },
-    { name: "Pejalan Kaki",minPoin: 20  },
-    { name: "Siswa",       minPoin: 50  },
-    { name: "Pelajar",     minPoin: 100 },
-    { name: "Pengendara",  minPoin: 200 },
-    { name: "Pelopor",     minPoin: 350 },
-    { name: "Pahlawan Jalan", minPoin: 500 }
+    { name: "Pesepeda",       minPoin: 0,   ikon: "🚲" },
+    { name: "Pejalan Kaki",   minPoin: 20,  ikon: "🚶" },
+    { name: "Siswa",          minPoin: 50,  ikon: "🎒" },
+    { name: "Pelajar",        minPoin: 100, ikon: "📚" },
+    { name: "Pengendara",     minPoin: 200, ikon: "🏍️" },
+    { name: "Pelopor",        minPoin: 350, ikon: "⭐" },
+    { name: "Pahlawan Jalan", minPoin: 500, ikon: "🏆" }
 ];
 
 // Badge Data
 const BADGES = [
-    { id: "rambu_master",  label: "🔴 Rambu Master",   cond: "jawab 5 soal rambu beruntun benar" },
-    { id: "zero_violation",label: "✅ Zero Violation",  cond: "sempurna 10/10 tanpa salah" },
-    { id: "speed_learner", label: "⚡ Speed Learner",   cond: "jawab dalam < 3 detik rata-rata" },
-    { id: "etika_hero",    label: "🦸 Etika Hero",      cond: "selesaikan Mode Skenario 100%" },
-    { id: "uu_master",     label: "📚 UU Master",       cond: "skor Mode Kuis > 80" },
-    { id: "combo_king",    label: "🔥 Combo King",      cond: "raih combo 5x beruntun" },
-    { id: "all_modes",     label: "🌟 All Rounder",     cond: "mainkan semua 4 mode" },
-    { id: "first_play",    label: "🎯 Pelopor Pertama", cond: "main pertama kali" },
-    { id: "persistent",    label: "💪 Pantang Menyerah",cond: "main 3 sesi berbeda" },
-    { id: "top_scorer",    label: "🏆 Juara Lokal",     cond: "masuk top 3 leaderboard" }
+    { id: "first_play",    label: "🎯 Pelopor Pertama",  cond: "Main pertama kali" },
+    { id: "zero_violation", label: "✅ Zero Violation",   cond: "Sempurna tanpa salah" },
+    { id: "etika_hero",    label: "🦸 Etika Hero",       cond: "Selesaikan Mode Skenario" },
+    { id: "uu_master",     label: "📚 UU Master",        cond: "Skor Mode Kuis > 80" },
+    { id: "rambu_master",  label: "🛑 Rambu Master",     cond: "Selesaikan Tebak Rambu" },
+    { id: "combo_king",    label: "🔥 Combo King",       cond: "Combo 5x beruntun" },
+    { id: "persistent",    label: "💪 Pantang Menyerah", cond: "Main 3 sesi berbeda" },
+    { id: "top_scorer",    label: "🏆 Juara Lokal",      cond: "Masuk top 3 leaderboard" },
+    { id: "speed_learner", label: "⚡ Speed Learner",    cond: "Jawab < 5 detik rata-rata" },
+    { id: "all_modes",     label: "🌟 All Rounder",      cond: "Mainkan semua mode" }
 ];
 
-// Scenario Data (15 Scenarios)
+// ============================================================
+// SKENARIO DATA (15 Skenario Situasi Lalu Lintas)
+// ============================================================
 const SCENARIOS = [
     {
         id: 1,
         kategori: "etika",
+        gambar: "assets/image/zebra cros.png",
         situasi: "Lampu lalu lintas baru saja berubah hijau, tetapi masih ada pejalan kaki yang belum selesai menyeberang di zebra cross.",
         pilihan: [
             { id: "A", teks: "Tekan klakson keras agar pejalan kaki menyingkir" },
@@ -42,6 +51,7 @@ const SCENARIOS = [
     {
         id: 2,
         kategori: "regulasi",
+        gambar: "assets/image/bg-main.png",
         situasi: "Anda sedang berkendara di jalan dua arah. Kendaraan di depan Anda melaju lambat, dan marka jalan di tengah adalah garis putih putus-putus.",
         pilihan: [
             { id: "A", teks: "Boleh menyalip jika dari arah berlawanan aman" },
@@ -56,6 +66,7 @@ const SCENARIOS = [
     {
         id: 3,
         kategori: "distraksi",
+        gambar: "assets/image/motorcycle.png",
         situasi: "Handphone Anda berbunyi keras dan ada pesan masuk yang sangat penting saat Anda mengendarai sepeda motor.",
         pilihan: [
             { id: "A", teks: "Baca pesan sekilas sambil terus melaju" },
@@ -70,6 +81,7 @@ const SCENARIOS = [
     {
         id: 4,
         kategori: "prioritas",
+        gambar: "assets/image/perempatan.png",
         situasi: "Anda tiba di persimpangan empat jalan yang tidak memiliki lampu lalu lintas. Pada saat bersamaan, ada kendaraan lain di sebelah kiri Anda.",
         pilihan: [
             { id: "A", teks: "Kendaraan yang datang dari cabang persimpangan sebelah kiri mendapat prioritas" },
@@ -77,13 +89,14 @@ const SCENARIOS = [
             { id: "C", teks: "Siapa yang paling cepat maju, dia yang prioritas" }
         ],
         jawaban: "A",
-        penjelasan: "Pada persimpangan sebidang tak bersinyal, pengemudi wajib mendahulukan kendaraan yang datang dari cabang persimpangan sebelah kiri. Namun, pada persimpangan tanpa rambu, prioritas umumnya diberikan pada kendaraan yang lurus atau dari jalan utama. Jika jalan sama, dahulukan dari kiri.",
+        penjelasan: "Pada persimpangan sebidang tak bersinyal, pengemudi wajib mendahulukan kendaraan yang datang dari cabang persimpangan sebelah kiri.",
         pasal: "Pasal 113 UU 22/2009",
         poin: 10
     },
     {
         id: 5,
         kategori: "keselamatan",
+        gambar: "assets/image/motorcycle.png",
         situasi: "Jarak sekolah hanya 200 meter dari rumah. Anda hendak ke sekolah naik motor.",
         pilihan: [
             { id: "A", teks: "Tidak perlu pakai helm karena sangat dekat" },
@@ -98,6 +111,7 @@ const SCENARIOS = [
     {
         id: 6,
         kategori: "regulasi",
+        gambar: "assets/image/bg-main.png",
         situasi: "Anda sedang mencari tempat parkir di area yang padat dan melihat ruang kosong tepat di depan hidran pemadam kebakaran.",
         pilihan: [
             { id: "A", teks: "Parkir di situ sebentar saja, menyalakan lampu hazard" },
@@ -112,6 +126,7 @@ const SCENARIOS = [
     {
         id: 7,
         kategori: "keselamatan",
+        gambar: "assets/image/bg-main.png",
         situasi: "Cuaca tiba-tiba hujan deras. Jalanan menjadi sangat licin dan jarak pandang berkurang.",
         pilihan: [
             { id: "A", teks: "Kurangi kecepatan, nyalakan lampu utama, dan jaga jarak aman" },
@@ -126,6 +141,7 @@ const SCENARIOS = [
     {
         id: 8,
         kategori: "kewajiban kendaraan",
+        gambar: "assets/image/motorcycle.png",
         situasi: "Anda menyadari lampu rem belakang motor Anda putus/mati saat malam hari.",
         pilihan: [
             { id: "A", teks: "Tidak masalah, yang penting lampu depan menyala" },
@@ -140,6 +156,7 @@ const SCENARIOS = [
     {
         id: 9,
         kategori: "jarak aman",
+        gambar: "assets/image/bg-main.png",
         situasi: "Kendaraan di depan Anda mendadak mengerem keras.",
         pilihan: [
             { id: "A", teks: "Banting setir ke kiri sekuat tenaga" },
@@ -154,6 +171,7 @@ const SCENARIOS = [
     {
         id: 10,
         kategori: "tanda belok",
+        gambar: "assets/image/perempatan.png",
         situasi: "Anda hendak berbelok ke kanan di persimpangan yang jaraknya tinggal 10 meter.",
         pilihan: [
             { id: "A", teks: "Nyalakan sein kanan lalu langsung potong jalan" },
@@ -168,6 +186,7 @@ const SCENARIOS = [
     {
         id: 11,
         kategori: "regulasi",
+        gambar: "assets/image/bg-main.png",
         situasi: "Jalanan sangat macet, tapi trotoar di sebelah kiri kosong dari pejalan kaki.",
         pilihan: [
             { id: "A", teks: "Naik ke trotoar perlahan agar tidak mengganggu" },
@@ -182,6 +201,7 @@ const SCENARIOS = [
     {
         id: 12,
         kategori: "legalitas",
+        gambar: "assets/image/motorcycle.png",
         situasi: "Teman Anda minta diantar ke pasar, padahal Anda baru usia 16 tahun dan belum memiliki SIM C.",
         pilihan: [
             { id: "A", teks: "Antar saja karena lewat jalan kampung" },
@@ -196,6 +216,7 @@ const SCENARIOS = [
     {
         id: 13,
         kategori: "adaptasi",
+        gambar: "assets/image/bg-main.png",
         situasi: "Anda sedang melaju dan melihat lubang besar di tengah lajur Anda.",
         pilihan: [
             { id: "A", teks: "Segera banting setir ke kanan tanpa melihat spion" },
@@ -210,6 +231,7 @@ const SCENARIOS = [
     {
         id: 14,
         kategori: "prioritas darurat",
+        gambar: "assets/image/bg-main.png",
         situasi: "Terdengar sirene Ambulans meraung dari arah belakang Anda saat jalanan sedang padat.",
         pilihan: [
             { id: "A", teks: "Menepi ke kiri dan memberikan jalan sebisa mungkin" },
@@ -224,6 +246,7 @@ const SCENARIOS = [
     {
         id: 15,
         kategori: "etika",
+        gambar: "assets/image/perempatan.png",
         situasi: "Anda berpapasan dengan mobil lain di jalan sempit. Di sisi Anda ada ruang untuk menepi sejenak.",
         pilihan: [
             { id: "A", teks: "Tetap maju di tengah, biar mobil lain yang mundur" },
@@ -237,10 +260,13 @@ const SCENARIOS = [
     }
 ];
 
-// Data Mode Kuis UU (20 Soal Pilihan Ganda)
+// ============================================================
+// KUIS UU DATA (20 Soal Pilihan Ganda)
+// ============================================================
 const KUIS_DATA = [
     {
         id: 1,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Apa kepanjangan dari SIM?",
         pilihan: [
             { id: "A", teks: "Surat Izin Mengemudi" },
@@ -254,6 +280,7 @@ const KUIS_DATA = [
     },
     {
         id: 2,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Berapa batas usia minimal untuk memiliki SIM C?",
         pilihan: [
             { id: "A", teks: "16 Tahun" },
@@ -267,6 +294,7 @@ const KUIS_DATA = [
     },
     {
         id: 3,
+        gambar: "assets/image/zebra cros.png",
         situasi: "Apa fungsi utama dari zebra cross?",
         pilihan: [
             { id: "A", teks: "Tempat parkir motor" },
@@ -280,6 +308,7 @@ const KUIS_DATA = [
     },
     {
         id: 4,
+        gambar: "assets/image/bg-main.png",
         situasi: "Rambu dengan warna dasar merah dan tulisan putih biasanya merupakan rambu...",
         pilihan: [
             { id: "A", teks: "Petunjuk" },
@@ -293,6 +322,7 @@ const KUIS_DATA = [
     },
     {
         id: 5,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Apa hukuman mengendarai motor tanpa helm SNI?",
         pilihan: [
             { id: "A", teks: "Denda maksimal Rp250.000 atau kurungan 1 bulan" },
@@ -306,6 +336,7 @@ const KUIS_DATA = [
     },
     {
         id: 6,
+        gambar: "assets/image/bg-main.png",
         situasi: "Marka jalan berwarna kuning membujur tanpa putus di tengah jalan berarti...",
         pilihan: [
             { id: "A", teks: "Boleh mendahului" },
@@ -313,12 +344,13 @@ const KUIS_DATA = [
             { id: "C", teks: "Batas kecepatan" }
         ],
         jawaban: "B",
-        penjelasan: "Garis kuning membujur utuh merupakan batas lajur jalan nasional dan pengemudi dilarang melintasinya (tidak boleh menyalip).",
+        penjelasan: "Garis kuning membujur utuh merupakan batas lajur jalan nasional dan pengemudi dilarang melintasinya.",
         pasal: "Permenhub Marka Jalan",
         poin: 10
     },
     {
         id: 7,
+        gambar: "assets/image/perempatan.png",
         situasi: "Jika terjadi kecelakaan, apa kewajiban pertama pengemudi?",
         pilihan: [
             { id: "A", teks: "Melarikan diri agar tidak dihakimi massa" },
@@ -332,6 +364,7 @@ const KUIS_DATA = [
     },
     {
         id: 8,
+        gambar: "assets/image/bg-main.png",
         situasi: "Apa fungsi dari lampu Hazard?",
         pilihan: [
             { id: "A", teks: "Memberi tanda saat hujan deras" },
@@ -345,6 +378,7 @@ const KUIS_DATA = [
     },
     {
         id: 9,
+        gambar: "assets/image/bg-main.png",
         situasi: "Berapa kecepatan maksimal di kawasan permukiman?",
         pilihan: [
             { id: "A", teks: "30 km/jam" },
@@ -358,6 +392,7 @@ const KUIS_DATA = [
     },
     {
         id: 10,
+        gambar: "assets/image/bg-main.png",
         situasi: "Apa yang harus dilakukan saat mendengar sirine pemadam kebakaran?",
         pilihan: [
             { id: "A", teks: "Merapat ke tepi jalan dan memberi prioritas jalan" },
@@ -371,6 +406,7 @@ const KUIS_DATA = [
     },
     {
         id: 11,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Selain SIM dan STNK, kelengkapan apa yang wajib dibawa?",
         pilihan: [
             { id: "A", teks: "KTP" },
@@ -378,12 +414,13 @@ const KUIS_DATA = [
             { id: "C", teks: "Helm SNI" }
         ],
         jawaban: "A",
-        penjelasan: "Sebagai WNI, KTP adalah identitas wajib. Namun untuk pengemudian, SIM, STNK, dan kelengkapan standar kendaraan yang wajib ada.",
+        penjelasan: "Sebagai WNI, KTP adalah identitas wajib. Untuk pengemudian, SIM, STNK, dan kelengkapan standar kendaraan wajib ada.",
         pasal: "Pasal 106 ayat (5) UU 22/2009",
         poin: 10
     },
     {
         id: 12,
+        gambar: "assets/image/zebra cros.png",
         situasi: "Di mana posisi berjalan kaki yang benar jika tidak ada trotoar?",
         pilihan: [
             { id: "A", teks: "Di tengah jalan" },
@@ -397,6 +434,7 @@ const KUIS_DATA = [
     },
     {
         id: 13,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Kendaraan bermotor wajib menyalakan lampu utama pada siang hari untuk...",
         pilihan: [
             { id: "A", teks: "Mobil penumpang" },
@@ -410,6 +448,7 @@ const KUIS_DATA = [
     },
     {
         id: 14,
+        gambar: "assets/image/bg-main.png",
         situasi: "Apa yang dilarang saat berada di jalan tol?",
         pilihan: [
             { id: "A", teks: "Berjalan dengan kecepatan 80 km/jam" },
@@ -423,6 +462,7 @@ const KUIS_DATA = [
     },
     {
         id: 15,
+        gambar: "assets/image/perempatan.png",
         situasi: "Lampu kuning berkedip pada simpang jalan berarti...",
         pilihan: [
             { id: "A", teks: "Berhenti dan tunggu hijau" },
@@ -436,6 +476,7 @@ const KUIS_DATA = [
     },
     {
         id: 16,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Kapan plat nomor (TNKB) harus diganti baru?",
         pilihan: [
             { id: "A", teks: "Setiap 1 tahun" },
@@ -449,6 +490,7 @@ const KUIS_DATA = [
     },
     {
         id: 17,
+        gambar: "assets/image/motorcycle.png",
         situasi: "Berapa banyak orang yang boleh dibonceng pada sepeda motor?",
         pilihan: [
             { id: "A", teks: "Maksimal 1 orang" },
@@ -462,6 +504,7 @@ const KUIS_DATA = [
     },
     {
         id: 18,
+        gambar: "assets/image/bg-main.png",
         situasi: "Apa arti rambu berbentuk lingkaran dengan latar biru dan gambar panah lurus?",
         pilihan: [
             { id: "A", teks: "Larangan berjalan lurus" },
@@ -475,6 +518,7 @@ const KUIS_DATA = [
     },
     {
         id: 19,
+        gambar: "assets/image/bg-main.png",
         situasi: "Alat pemantul cahaya tambahan pada bagian belakang truk berfungsi untuk...",
         pilihan: [
             { id: "A", teks: "Estetika kendaraan" },
@@ -482,12 +526,13 @@ const KUIS_DATA = [
             { id: "C", teks: "Penanda perusahaan" }
         ],
         jawaban: "B",
-        penjelasan: "Reflektor/alat pemantul cahaya wajib pada kendaraan besar untuk meminimalisir tabrak belakang di malam hari atau kondisi minim cahaya.",
+        penjelasan: "Reflektor/alat pemantul cahaya wajib pada kendaraan besar untuk meminimalisir tabrak belakang di malam hari.",
         pasal: "Peraturan Keselamatan Kendaraan",
         poin: 10
     },
     {
         id: 20,
+        gambar: "assets/image/bg-main.png",
         situasi: "Mengemudi di bawah pengaruh alkohol diancam dengan hukuman...",
         pilihan: [
             { id: "A", teks: "Tilang Rp100.000" },
@@ -501,67 +546,18 @@ const KUIS_DATA = [
     }
 ];
 
-// Data Mode Belajar (Ensiklopedia Rambu)
+// ============================================================
+// ENSIKLOPEDIA RAMBU DATA
+// ============================================================
 const RAMBU_DATA = [
-    {
-        nama: "Dilarang Masuk",
-        tipe: "Larangan",
-        deskripsi: "Rambu lingkaran merah dengan garis strip putih mendatar. Semua kendaraan dilarang masuk ke jalan tersebut dari arah rambu dipasang.",
-        ikon: "⛔"
-    },
-    {
-        nama: "Dilarang Parkir",
-        tipe: "Larangan",
-        deskripsi: "Rambu lingkaran merah dengan huruf P dicoret. Kendaraan dilarang parkir di area yang ditentukan (biasanya hingga 15 meter dari rambu).",
-        ikon: "🚳 (Bayangkan huruf P dicoret merah)"
-    },
-    {
-        nama: "Dilarang Berhenti",
-        tipe: "Larangan",
-        deskripsi: "Rambu lingkaran merah dengan huruf S dicoret silang. Kendaraan dilarang berhenti walau sejenak (mesin masih menyala).",
-        ikon: "🛑 (Bayangkan huruf S dicoret)"
-    },
-    {
-        nama: "Zebra Cross",
-        tipe: "Peringatan/Petunjuk",
-        deskripsi: "Rambu persegi biru dengan segitiga putih bergambar orang menyeberang. Menunjukkan tempat penyeberangan pejalan kaki.",
-        ikon: "🚸"
-    },
-    {
-        nama: "Lampu Lalu Lintas",
-        tipe: "Peringatan",
-        deskripsi: "Rambu belah ketupat kuning bergambar lampu lalu lintas. Memperingatkan ada persimpangan dengan Alat Pemberi Isyarat Lalu Lintas (APILL) di depan.",
-        ikon: "🚥"
-    },
-    {
-        nama: "Wajib Lurus",
-        tipe: "Perintah",
-        deskripsi: "Rambu lingkaran biru dengan panah putih ke atas/depan. Semua kendaraan wajib berjalan lurus, dilarang belok kiri atau kanan.",
-        ikon: "⬆️"
-    },
-    {
-        nama: "Jalan Licin",
-        tipe: "Peringatan",
-        deskripsi: "Rambu belah ketupat kuning dengan ikon mobil meninggalkan jejak berkelok. Berhati-hati kurangi kecepatan karena jalanan licin.",
-        ikon: "〰️🚗"
-    },
-    {
-        nama: "Banyak Anak-Anak",
-        tipe: "Peringatan",
-        deskripsi: "Rambu belah ketupat kuning dengan ikon dua anak kecil. Peringatan akan memasuki area sekolah atau permukiman, kurangi kecepatan.",
-        ikon: "🚸"
-    },
-    {
-        nama: "Kecepatan Maksimal 40",
-        tipe: "Larangan",
-        deskripsi: "Rambu lingkaran putih berbingkai merah dengan angka 40. Dilarang memacu kendaraan melebihi 40 km/jam.",
-        ikon: "4️⃣0️⃣"
-    },
-    {
-        nama: "Petunjuk Rumah Sakit",
-        tipe: "Petunjuk",
-        deskripsi: "Rambu persegi biru dengan tanda palang/tempat tidur. Menunjukkan lokasi fasilitas pelayanan kesehatan terdekat.",
-        ikon: "🏥"
-    }
+    { nama: "Dilarang Masuk",       tipe: "Larangan",          ikon: "⛔", deskripsi: "Rambu lingkaran merah dengan garis strip putih mendatar. Semua kendaraan dilarang masuk ke jalan tersebut dari arah rambu dipasang." },
+    { nama: "Dilarang Parkir",      tipe: "Larangan",          ikon: "🅿️🚫", deskripsi: "Rambu lingkaran merah dengan huruf P dicoret. Kendaraan dilarang parkir di area yang ditentukan." },
+    { nama: "Dilarang Berhenti",    tipe: "Larangan",          ikon: "🛑",  deskripsi: "Rambu lingkaran merah dengan huruf S dicoret silang. Kendaraan dilarang berhenti walau sejenak." },
+    { nama: "Zebra Cross",          tipe: "Peringatan",        ikon: "🚸",  deskripsi: "Rambu persegi biru dengan segitiga putih bergambar orang menyeberang. Menunjukkan tempat penyeberangan pejalan kaki." },
+    { nama: "Lampu Lalu Lintas",    tipe: "Peringatan",        ikon: "🚥",  deskripsi: "Rambu belah ketupat kuning bergambar lampu lalu lintas. Memperingatkan ada persimpangan bersinyal di depan." },
+    { nama: "Wajib Lurus",          tipe: "Perintah",          ikon: "⬆️",  deskripsi: "Rambu lingkaran biru dengan panah putih ke atas. Semua kendaraan wajib berjalan lurus." },
+    { nama: "Jalan Licin",          tipe: "Peringatan",        ikon: "⚠️",  deskripsi: "Rambu belah ketupat kuning dengan ikon mobil berkelok. Berhati-hati karena jalanan licin." },
+    { nama: "Banyak Anak-Anak",     tipe: "Peringatan",        ikon: "🚸",  deskripsi: "Rambu belah ketupat kuning dengan ikon dua anak kecil. Area sekolah, kurangi kecepatan." },
+    { nama: "Kecepatan Maks 40",    tipe: "Larangan",          ikon: "4️⃣0️⃣", deskripsi: "Rambu lingkaran putih berbingkai merah dengan angka 40. Dilarang melebihi 40 km/jam." },
+    { nama: "Petunjuk Rumah Sakit",  tipe: "Petunjuk",         ikon: "🏥",  deskripsi: "Rambu persegi biru dengan tanda palang. Menunjukkan lokasi fasilitas kesehatan terdekat." }
 ];
-

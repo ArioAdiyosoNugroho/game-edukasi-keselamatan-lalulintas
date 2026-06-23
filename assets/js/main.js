@@ -1,6 +1,10 @@
-// Core App Logic - LajuAman
+// ============================================================
+// LajuAman — Game Logic (Edukasi Murni)
+// Game Edukasi Keselamatan Lalu Lintas
+// PPKLAJ Provinsi Jawa Tengah 2026
+// ============================================================
 
-const app = (function() {
+const app = (function () {
     // --- State ---
     let state = {
         nama: "",
@@ -14,104 +18,123 @@ const app = (function() {
         scenarioIndex: 0,
         combo: 0,
         correctCount: 0,
+        sessionScore: 0,
         timerInterval: null,
         timeTaken: 0,
         modesDimainkan: []
     };
 
     let leaderboard = [];
+    let tebakRambuData = [];
 
-    // --- Image Assets ---
-    const imgAssets = {};
-    const imgNames = ['motorcycle.png', 'road main.png', 'car.png', 'truck.png', 'becak.png', 'perempatan.png', 'zebra cros.png'];
-    let imagesLoaded = 0;
-
-    function preloadImages(callback) {
-        if (imgNames.length === 0) return callback();
-        imgNames.forEach(name => {
-            const img = new Image();
-            img.src = `assets/image/${name}`;
-            img.onload = () => {
-                imgAssets[name.replace('.png', '')] = img;
-                imagesLoaded++;
-                if (imagesLoaded === imgNames.length) callback();
-            };
-            img.onerror = () => {
-                console.error("Failed to load image:", name);
-                imagesLoaded++;
-                if (imagesLoaded === imgNames.length) callback();
-            };
-        });
+    // --- Audio (Web Audio API) ---
+    let audioCtx;
+    function getAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
     }
 
-    // --- Audio System (Web Audio API) ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playTone(freq, type, duration, vol=0.1) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+    function playTone(freq, type, duration, vol = 0.08) {
+        try {
+            const ctx = getAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(vol, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        } catch (e) { /* ignore audio errors */ }
     }
 
     function playDing() {
-        playTone(600, 'sine', 0.1);
-        setTimeout(() => playTone(800, 'sine', 0.2), 100);
+        playTone(523, 'sine', 0.1);
+        setTimeout(() => playTone(659, 'sine', 0.15), 80);
+        setTimeout(() => playTone(784, 'sine', 0.2), 160);
     }
 
     function playBuzz() {
-        playTone(150, 'sawtooth', 0.3, 0.2);
+        playTone(150, 'sawtooth', 0.25, 0.12);
     }
 
     // --- LocalStorage ---
     function loadData() {
-        const saved = localStorage.getItem('lajuaman_player');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            state = { ...state, ...parsed };
-        }
-        
-        const savedLeaderboard = localStorage.getItem('lajuaman_leaderboard');
-        if (savedLeaderboard) {
-            leaderboard = JSON.parse(savedLeaderboard);
-        } else {
-            // Mock data if empty
-            leaderboard = [
-                { nama: "Budi", skor: 140, rank: "Pelopor" },
-                { nama: "Citra", skor: 120, rank: "Pengendara" },
-                { nama: "Andi", skor: 80, rank: "Pelajar" }
-            ];
-            saveLeaderboard();
-        }
+        try {
+            const saved = localStorage.getItem('lajuaman_player');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+            }
+            const savedLB = localStorage.getItem('lajuaman_leaderboard');
+            if (savedLB) {
+                leaderboard = JSON.parse(savedLB);
+            } else {
+                leaderboard = [
+                    { nama: "Budi", skor: 140, rank: "Pelopor" },
+                    { nama: "Citra", skor: 120, rank: "Pengendara" },
+                    { nama: "Andi", skor: 80, rank: "Pelajar" }
+                ];
+                saveLeaderboard();
+            }
+        } catch (e) { console.error("Load error:", e); }
     }
 
     function saveData() {
-        localStorage.setItem('lajuaman_player', JSON.stringify(state));
+        try {
+            localStorage.setItem('lajuaman_player', JSON.stringify({
+                nama: state.nama,
+                totalPoin: state.totalPoin,
+                currentLevel: state.currentLevel,
+                badges: state.badges,
+                sessionCount: state.sessionCount,
+                highScore: state.highScore,
+                modesDimainkan: state.modesDimainkan,
+                lastPlayed: new Date().toISOString().slice(0, 10)
+            }));
+        } catch (e) { console.error("Save error:", e); }
     }
 
     function saveLeaderboard() {
-        localStorage.setItem('lajuaman_leaderboard', JSON.stringify(leaderboard));
+        try {
+            localStorage.setItem('lajuaman_leaderboard', JSON.stringify(leaderboard));
+        } catch (e) { console.error("Save LB error:", e); }
     }
 
     // --- UI Navigation ---
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+        const screen = document.getElementById(screenId);
+        if (screen) screen.classList.add('active');
 
-        if (screenId === 'leaderboard') {
-            renderLeaderboard();
+        if (screenId === 'leaderboard') renderLeaderboard();
+        if (screenId === 'badge-screen') renderBadges();
+        if (screenId === 'main-menu') updateHomeStats();
+    }
+
+    function updateHomeStats() {
+        const bar = document.getElementById('player-stats-bar');
+        if (state.nama) {
+            bar.style.display = 'flex';
+            document.getElementById('ui-home-level').textContent = `${getLevelIcon()} ${state.currentLevel}`;
+            document.getElementById('ui-home-points').textContent = `⭐ ${state.totalPoin} Poin`;
+        } else {
+            bar.style.display = 'none';
         }
     }
-    
-    function showGameMenu() { showScreen('game-menu'); }
-    function showEdukasiMenu() { showScreen('edukasi-menu'); }
+
+    function getLevelIcon() {
+        const lvl = LEVELS.find(l => l.name === state.currentLevel);
+        return lvl ? lvl.ikon : "🎒";
+    }
+
+    function quitGame() {
+        clearInterval(state.timerInterval);
+        showScreen('main-menu');
+    }
 
     // --- Gamification ---
     function checkLevelUp() {
@@ -124,18 +147,14 @@ const app = (function() {
         }
         if (newLevel !== state.currentLevel) {
             state.currentLevel = newLevel;
-            // Optionally could show a Level Up notification here
         }
-        document.getElementById('ui-level').textContent = `Level: ${state.currentLevel}`;
     }
 
     function awardBadge(badgeId) {
         if (!state.badges.includes(badgeId)) {
             state.badges.push(badgeId);
             const badgeDef = BADGES.find(b => b.id === badgeId);
-            if (badgeDef) {
-                showBadgePopup(badgeDef.label);
-            }
+            if (badgeDef) showBadgePopup(badgeDef.label);
             saveData();
         }
     }
@@ -144,22 +163,33 @@ const app = (function() {
         const popup = document.getElementById('badge-notification');
         document.getElementById('badge-name-notif').textContent = badgeName;
         popup.classList.remove('hidden', 'hiding');
-        
         setTimeout(() => {
             popup.classList.add('hiding');
             setTimeout(() => popup.classList.add('hidden'), 500);
         }, 3000);
     }
 
-    function getActiveData() {
-        return state.currentMode === 'kuis' ? KUIS_DATA : SCENARIOS;
+    function showComboPopup() {
+        const p = document.getElementById('ui-combo-popup');
+        p.classList.remove('hidden');
+        p.style.animation = 'none';
+        void p.offsetWidth;
+        p.style.animation = 'comboAnim 1s forwards';
+        setTimeout(() => p.classList.add('hidden'), 1100);
     }
 
-    // --- Gameplay Logic ---
+    // --- Data Access ---
+    function getActiveData() {
+        if (state.currentMode === 'kuis') return KUIS_DATA;
+        if (state.currentMode === 'tebak_rambu') return tebakRambuData;
+        return SCENARIOS;
+    }
+
+    // --- Start Game ---
     function startGame(mode) {
         const nameInput = document.getElementById('player-name').value.trim();
         if (!nameInput) {
-            alert("Silakan masukkan nama Anda di menu utama terlebih dahulu!");
+            alert("Silakan masukkan nama Anda terlebih dahulu!");
             showScreen('main-menu');
             return;
         }
@@ -167,64 +197,42 @@ const app = (function() {
         state.nama = nameInput;
         state.currentMode = mode;
         state.scenarioIndex = 0;
-        state.totalPoin = state.totalPoin || 0; 
         state.sessionScore = 0;
         state.combo = 0;
         state.correctCount = 0;
-        
+
         state.sessionCount++;
         if (state.sessionCount === 1) awardBadge("first_play");
-        if (state.sessionCount === 3) awardBadge("persistent");
+        if (state.sessionCount >= 3) awardBadge("persistent");
 
         if (!state.modesDimainkan.includes(mode)) state.modesDimainkan.push(mode);
-        if (state.modesDimainkan.length >= 4) awardBadge("all_modes");
+        if (state.modesDimainkan.length >= 3) awardBadge("all_modes");
 
         checkLevelUp();
-        document.getElementById('ui-score').textContent = `Skor: 0`;
+
+        document.getElementById('ui-score').textContent = `⭐ 0`;
+
+        const comboEl = document.getElementById('ui-combo');
+        comboEl.classList.add('hidden');
 
         const uiTimer = document.getElementById('ui-timer');
-        uiTimer.style.display = 'none';
-
-        const gameScreen = document.getElementById('game-screen');
-        gameScreen.classList.remove('arcade-mode');
-
-        if (mode === 'tantangan' || mode === 'tebak_rambu' || mode === 'arcade') {
-            uiTimer.style.display = 'inline';
-            uiTimer.textContent = '⏱️ 0s';
-            uiTimer.classList.remove('timer-warning');
+        if (mode === 'tebak_rambu') {
+            uiTimer.style.display = 'inline-flex';
+        } else {
+            uiTimer.style.display = 'none';
         }
 
         showScreen('game-screen');
-        startCanvasAnimation();
 
-        if (mode === 'arcade') {
-            gameScreen.classList.add('arcade-mode');
-            startArcadeLogic();
-        } else if (mode === 'tebak_rambu') {
+        if (mode === 'tebak_rambu') {
+            tebakRambuData = [...RAMBU_DATA].sort(() => 0.5 - Math.random()).slice(0, 10);
             loadTebakRambu();
         } else {
             loadScenario();
         }
     }
-    
-    function startArcade() {
-        startGame('arcade');
-    }
 
-    function startArcadeLogic() {
-        state.sessionScore = 0;
-        state.timeTaken = 0;
-        clearInterval(state.timerInterval);
-        
-        const uiTimer = document.getElementById('ui-timer');
-        state.timerInterval = setInterval(() => {
-            state.timeTaken++;
-            state.sessionScore += 5; // +5 points per second survived
-            uiTimer.textContent = `⏱️ ${state.timeTaken}s`;
-            document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
-        }, 1000);
-    }
-
+    // --- Load Scenario (Skenario & Kuis) ---
     function loadScenario() {
         const data = getActiveData();
         if (state.scenarioIndex >= data.length) {
@@ -234,110 +242,96 @@ const app = (function() {
 
         const sc = data[state.scenarioIndex];
         const prefix = state.currentMode === 'kuis' ? 'Soal' : 'Skenario';
-        document.getElementById('ui-scenario-counter').textContent = `${prefix} ${state.scenarioIndex + 1}/${data.length}`;
-        document.getElementById('ui-scenario-text').innerHTML = sc.situasi;
 
-        const pb = document.getElementById('progress-bar');
-        pb.style.width = `${((state.scenarioIndex) / data.length) * 100}%`;
+        // Update progress
+        const total = data.length;
+        document.getElementById('progress-bar').style.width = `${(state.scenarioIndex / total) * 100}%`;
+        document.getElementById('ui-progress-text').textContent = `${state.scenarioIndex + 1}/${total}`;
 
-        const choicesContainer = document.getElementById('ui-choices');
-        choicesContainer.innerHTML = '';
+        // Set illustration
+        const img = document.getElementById('ui-scenario-img');
+        img.src = sc.gambar || 'assets/image/bg-main.png';
+        img.alt = sc.situasi.substring(0, 60);
 
+        // Set question
+        document.getElementById('ui-scenario-text').textContent = sc.situasi;
+
+        // Render choices
+        const container = document.getElementById('ui-choices');
+        container.innerHTML = '';
         sc.pilihan.forEach(p => {
             const btn = document.createElement('button');
             btn.className = 'choice-btn';
-            btn.innerHTML = `<strong>[${p.id}]</strong> &nbsp; ${p.teks}`;
+            btn.innerHTML = `<strong>[${p.id}]</strong>&nbsp;&nbsp;${p.teks}`;
             btn.onclick = () => handleAnswer(p.id, btn);
-            choicesContainer.appendChild(btn);
+            container.appendChild(btn);
         });
-
-        // Reset flash
-        document.getElementById('flash-overlay').style.opacity = '0';
-        
-        // Timer for Tantangan
-        if (state.currentMode === 'tantangan') {
-            clearInterval(state.timerInterval);
-            state.timeTaken = 0;
-            const uiTimer = document.getElementById('ui-timer');
-            uiTimer.textContent = `⏱️ 0s`;
-            uiTimer.classList.remove('timer-warning');
-            
-            state.timerInterval = setInterval(() => {
-                state.timeTaken++;
-                uiTimer.textContent = `⏱️ ${state.timeTaken}s`;
-                if (state.timeTaken >= 10) {
-                    uiTimer.classList.add('timer-warning');
-                }
-            }, 1000);
-        }
     }
 
-    let tebakRambuData = [];
-    
+    // --- Load Tebak Rambu ---
     function loadTebakRambu() {
-        if (state.scenarioIndex === 0) {
-            tebakRambuData = [...RAMBU_DATA].sort(() => 0.5 - Math.random()).slice(0, 10);
-        }
-        
         if (state.scenarioIndex >= tebakRambuData.length) {
             endGame();
             return;
         }
 
         const rambu = tebakRambuData[state.scenarioIndex];
-        document.getElementById('ui-scenario-counter').textContent = `Tebak Rambu ${state.scenarioIndex + 1}/${tebakRambuData.length}`;
-        
+        const total = tebakRambuData.length;
+
+        // Progress
+        document.getElementById('progress-bar').style.width = `${(state.scenarioIndex / total) * 100}%`;
+        document.getElementById('ui-progress-text').textContent = `${state.scenarioIndex + 1}/${total}`;
+
+        // Show large icon as illustration
+        const img = document.getElementById('ui-scenario-img');
+        img.src = 'assets/image/bg-main.png';
+        img.alt = 'Tebak Rambu';
+
+        // Question with large icon
         document.getElementById('ui-scenario-text').innerHTML = `
-            <div style="text-align:center; font-size: 60px; margin: 10px 0;">
-                ${rambu.ikon}
-            </div>
-            <div style="text-align:center; font-weight: bold;">Apa arti rambu di atas?</div>
+            <div style="text-align:center; font-size: 64px; margin: 10px 0; line-height:1;">${rambu.ikon}</div>
+            <div style="text-align:center; font-weight: 700; font-size: 16px;">Apa arti rambu di atas?</div>
         `;
 
-        const pb = document.getElementById('progress-bar');
-        pb.style.width = `${((state.scenarioIndex) / tebakRambuData.length) * 100}%`;
+        // Generate choices (1 correct + 3 random wrong)
+        const container = document.getElementById('ui-choices');
+        container.innerHTML = '';
+        const wrongs = RAMBU_DATA.filter(r => r.nama !== rambu.nama)
+            .sort(() => 0.5 - Math.random()).slice(0, 3);
+        const options = [...wrongs, rambu].sort(() => 0.5 - Math.random());
 
-        const choicesContainer = document.getElementById('ui-choices');
-        choicesContainer.innerHTML = '';
-
-        const wrongChoices = RAMBU_DATA.filter(r => r.nama !== rambu.nama).sort(() => 0.5 - Math.random()).slice(0, 3);
-        const options = [...wrongChoices, rambu].sort(() => 0.5 - Math.random());
-        
         options.forEach((opt, idx) => {
             const btn = document.createElement('button');
             btn.className = 'choice-btn';
             const letter = String.fromCharCode(65 + idx);
-            btn.innerHTML = `<strong>[${letter}]</strong> &nbsp; ${opt.nama}`;
-            btn.onclick = () => handleTebakRambuAnswer(opt.nama === rambu.nama, btn, rambu);
-            choicesContainer.appendChild(btn);
+            btn.innerHTML = `<strong>[${letter}]</strong>&nbsp;&nbsp;${opt.nama}`;
+            btn.onclick = () => handleTebakAnswer(opt.nama === rambu.nama, btn, rambu);
+            container.appendChild(btn);
         });
 
-        document.getElementById('flash-overlay').style.opacity = '0';
-        
+        // Timer (10 seconds)
         clearInterval(state.timerInterval);
         state.timeTaken = 10;
         const uiTimer = document.getElementById('ui-timer');
         uiTimer.textContent = `⏱️ 10s`;
         uiTimer.classList.remove('timer-warning');
-        
+
         state.timerInterval = setInterval(() => {
             state.timeTaken--;
             uiTimer.textContent = `⏱️ ${state.timeTaken}s`;
-            if (state.timeTaken <= 3) {
-                uiTimer.classList.add('timer-warning');
-            }
+            if (state.timeTaken <= 3) uiTimer.classList.add('timer-warning');
             if (state.timeTaken <= 0) {
                 clearInterval(state.timerInterval);
-                const fakeBtn = document.createElement('div');
-                handleTebakRambuAnswer(false, fakeBtn, rambu);
+                // Time's up = wrong
+                document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+                handleTebakAnswer(false, document.createElement('div'), rambu);
             }
         }, 1000);
     }
 
+    // --- Handle Answer (Skenario & Kuis) ---
     function handleAnswer(selectedId, btnElement) {
         clearInterval(state.timerInterval);
-        
-        // Disable all buttons
         document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
 
         const data = getActiveData();
@@ -347,528 +341,202 @@ const app = (function() {
         if (isCorrect) {
             btnElement.classList.add('correct');
             playDing();
-            triggerConfetti();
-            
-            let pointsGained = sc.poin;
+
+            let points = sc.poin;
             state.combo++;
             state.correctCount++;
-            
+
             if (state.combo >= 3) {
-                pointsGained += 5;
+                points += 5;
                 showComboPopup();
             }
-            if (state.combo === 5) awardBadge("combo_king");
-            
-            if (state.currentMode === 'tantangan' && state.timeTaken < 5) {
-                pointsGained += 3;
+            if (state.combo >= 5) awardBadge("combo_king");
+
+            state.sessionScore += points;
+            state.totalPoin += points;
+
+            // Update combo display
+            const comboEl = document.getElementById('ui-combo');
+            if (state.combo >= 2) {
+                comboEl.textContent = `🔥 ${state.combo}x`;
+                comboEl.classList.remove('hidden');
             }
-            
-            state.sessionScore += pointsGained;
-            state.totalPoin += pointsGained;
-            
-            showFeedback(true, pointsGained, sc);
+
+            showFeedback(true, points, sc);
         } else {
             btnElement.classList.add('wrong');
             playBuzz();
-            triggerFlashShake();
-            
             state.combo = 0;
-            
-            // highlight correct
+            document.getElementById('ui-combo').classList.add('hidden');
+
+            // Highlight correct answer
             document.querySelectorAll('.choice-btn').forEach(b => {
-                if (b.innerHTML.includes(`[${sc.jawaban}]`)) {
-                    b.classList.add('correct');
-                }
+                if (b.innerHTML.includes(`[${sc.jawaban}]`)) b.classList.add('correct');
             });
-            
+
             showFeedback(false, 0, sc);
         }
 
-        document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
+        document.getElementById('ui-score').textContent = `⭐ ${state.sessionScore}`;
         checkLevelUp();
         saveData();
     }
 
-    function handleTebakRambuAnswer(isCorrect, btnElement, rambu) {
+    // --- Handle Tebak Rambu Answer ---
+    function handleTebakAnswer(isCorrect, btnElement, rambu) {
         clearInterval(state.timerInterval);
         document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
 
         if (isCorrect) {
             btnElement.classList.add('correct');
             playDing();
-            triggerConfetti();
-            
-            let pointsGained = 15;
+
+            let points = 15;
             state.combo++;
             state.correctCount++;
-            
-            if (state.combo >= 3) {
-                pointsGained += 5;
-                showComboPopup();
+
+            if (state.combo >= 3) { points += 5; showComboPopup(); }
+            if (state.combo >= 5) awardBadge("combo_king");
+
+            state.sessionScore += points;
+            state.totalPoin += points;
+
+            const comboEl = document.getElementById('ui-combo');
+            if (state.combo >= 2) {
+                comboEl.textContent = `🔥 ${state.combo}x`;
+                comboEl.classList.remove('hidden');
             }
-            
-            state.sessionScore += pointsGained;
-            state.totalPoin += pointsGained;
-            
-            showFeedback(true, pointsGained, { penjelasan: rambu.deskripsi, pasal: rambu.tipe });
+
+            showFeedback(true, points, { penjelasan: rambu.deskripsi, pasal: rambu.tipe });
         } else {
             btnElement.classList.add('wrong');
             playBuzz();
-            triggerFlashShake();
             state.combo = 0;
-            
+            document.getElementById('ui-combo').classList.add('hidden');
+
             document.querySelectorAll('.choice-btn').forEach(b => {
                 if (b.innerHTML.includes(rambu.nama)) b.classList.add('correct');
             });
-            
+
             showFeedback(false, 0, { penjelasan: rambu.deskripsi, pasal: rambu.tipe });
         }
 
-        document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
+        document.getElementById('ui-score').textContent = `⭐ ${state.sessionScore}`;
         checkLevelUp();
         saveData();
     }
 
-    function showComboPopup() {
-        const p = document.getElementById('ui-combo-popup');
-        p.classList.remove('hidden');
-        p.style.animation = 'none';
-        void p.offsetWidth; // trigger reflow
-        p.style.animation = 'popup 1s forwards';
-        setTimeout(() => p.classList.add('hidden'), 1000);
-    }
-
+    // --- Feedback ---
     function showFeedback(isCorrect, points, sc) {
         setTimeout(() => {
-            document.getElementById('ui-feedback-title').textContent = isCorrect ? "✅ BENAR!" : "❌ SALAH!";
+            document.getElementById('ui-feedback-icon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('ui-feedback-title').textContent = isCorrect ? 'BENAR!' : 'SALAH!';
             document.getElementById('ui-feedback-title').className = `feedback-title ${isCorrect ? 'correct' : 'wrong'}`;
-            document.getElementById('ui-feedback-points').textContent = isCorrect ? `+${points} Poin` : "+0 Poin";
+            document.getElementById('ui-feedback-points').textContent = isCorrect ? `+${points} Poin` : '+0 Poin';
             document.getElementById('ui-feedback-explanation').textContent = sc.penjelasan;
             document.getElementById('ui-feedback-pasal').textContent = sc.pasal;
-            
             showScreen('feedback-screen');
-        }, 1000); // 1 second delay to see right/wrong colors
+        }, 800);
     }
 
+    // --- Next Scenario ---
     function nextScenario() {
         state.scenarioIndex++;
+        showScreen('game-screen');
+
         if (state.currentMode === 'tebak_rambu') {
-            showScreen('game-screen');
             loadTebakRambu();
         } else {
-            const data = getActiveData();
-            if (state.scenarioIndex < data.length) {
-                showScreen('game-screen');
-                loadScenario();
-            } else {
-                endGame();
-            }
+            loadScenario();
         }
     }
 
+    // --- End Game ---
     function endGame() {
         clearInterval(state.timerInterval);
         const data = getActiveData();
-        
-        // Check final badges
-        if (state.currentMode === 'skenario' || state.currentMode === 'tantangan') {
-            awardBadge("etika_hero");
-        }
-        if (state.currentMode === 'kuis' && state.sessionScore >= 80) {
-            awardBadge("uu_master");
-        }
-        
-        if (state.correctCount === data.length) {
-            awardBadge("zero_violation");
-        }
-        
+
+        // Badges
+        if (state.currentMode === 'skenario') awardBadge("etika_hero");
+        if (state.currentMode === 'kuis' && state.sessionScore >= 80) awardBadge("uu_master");
+        if (state.currentMode === 'tebak_rambu') awardBadge("rambu_master");
+        if (state.correctCount === data.length) awardBadge("zero_violation");
+
         if (state.sessionScore > state.highScore) {
             state.highScore = state.sessionScore;
         }
 
-        // Update Leaderboard
+        // Leaderboard
         leaderboard.push({
             nama: state.nama,
             skor: state.sessionScore,
             rank: state.currentLevel
         });
         leaderboard.sort((a, b) => b.skor - a.skor);
-        leaderboard = leaderboard.slice(0, 10); // Keep top 10
+        leaderboard = leaderboard.slice(0, 10);
         saveLeaderboard();
 
-        // Check if top 3
-        const myRank = leaderboard.findIndex(entry => entry.nama === state.nama && entry.skor === state.sessionScore);
-        if (myRank >= 0 && myRank < 3) {
-            awardBadge("top_scorer");
-        }
+        const myRank = leaderboard.findIndex(e => e.nama === state.nama && e.skor === state.sessionScore);
+        if (myRank >= 0 && myRank < 3) awardBadge("top_scorer");
 
         saveData();
 
-        // Populate Result Screen
+        // Populate Result
         document.getElementById('ui-result-name').textContent = state.nama;
         document.getElementById('ui-result-score').textContent = state.sessionScore;
-        document.getElementById('ui-result-rank').textContent = `⭐ ${state.currentLevel}`;
-        
-        const accuracy = Math.round((state.correctCount / data.length) * 100);
-        document.getElementById('ui-result-accuracy').textContent = `${state.correctCount}/${data.length} (${accuracy}%)`;
-
-        // Stop canvas
-        stopCanvasAnimation();
+        const accuracy = data.length > 0 ? Math.round((state.correctCount / data.length) * 100) : 0;
+        document.getElementById('ui-result-accuracy').textContent = `${accuracy}%`;
+        document.getElementById('ui-result-rank').textContent = state.currentLevel;
 
         showScreen('result-screen');
     }
 
+    // --- Leaderboard ---
     function renderLeaderboard() {
         const list = document.getElementById('ui-leaderboard-list');
         list.innerHTML = '';
-        
+        const medals = ['🥇', '🥈', '🥉'];
         leaderboard.forEach((entry, i) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${i+1}. ${entry.nama}</span> <span>${entry.skor} ⭐ ${entry.rank}</span>`;
+            const medal = medals[i] || `${i + 1}.`;
+            li.innerHTML = `<span>${medal} ${entry.nama}</span><span>${entry.skor} ⭐ ${entry.rank}</span>`;
             list.appendChild(li);
         });
 
         const cur = document.getElementById('ui-leaderboard-current');
         if (state.nama) {
-            cur.innerHTML = `Kamu: ${state.nama} | Skor Tertinggi: ${state.highScore} | Rank: ${state.currentLevel}`;
+            cur.innerHTML = `→ ${state.nama} | Skor Tertinggi: ${state.highScore} | ${state.currentLevel}`;
         } else {
-            cur.innerHTML = `Mainkan game untuk masuk ke Leaderboard!`;
+            cur.innerHTML = 'Mainkan game untuk masuk Leaderboard!';
         }
     }
 
-    // --- Canvas Animation ---
-    let animId;
-    let canvas, ctx;
-    let roadOffset = 0;
-    let particles = [];
-    let traffic = [];
-    let collectibles = [];
-    let floatingTexts = [];
-    let playerY = 100;
-    let targetPlayerY = 100;
-    let controlsSetup = false;
-    
-    function startCanvasAnimation() {
-        canvas = document.getElementById('game-canvas');
-        ctx = canvas.getContext('2d');
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        traffic = [];
-        collectibles = [];
-        floatingTexts = [];
-        playerY = canvas.height / 2;
-        targetPlayerY = playerY;
-        animId = requestAnimationFrame(drawCanvas);
-        setupControls();
-    }
-
-    function setupControls() {
-        if (controlsSetup) return;
-        controlsSetup = true;
-
-        window.addEventListener('keydown', (e) => {
-            if (state.currentMode !== 'arcade') return;
-            const speed = 25;
-            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-                targetPlayerY -= speed;
-                e.preventDefault();
-            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-                targetPlayerY += speed;
-                e.preventDefault();
-            }
+    // --- Badge Screen ---
+    function renderBadges() {
+        const grid = document.getElementById('ui-badge-grid');
+        grid.innerHTML = '';
+        BADGES.forEach(b => {
+            const unlocked = state.badges.includes(b.id);
+            const div = document.createElement('div');
+            div.className = `badge-card ${unlocked ? '' : 'locked'}`;
+            const parts = b.label.split(' ');
+            const icon = parts[0];
+            const name = parts.slice(1).join(' ');
+            div.innerHTML = `
+                <div class="badge-card-icon">${icon}</div>
+                <div class="badge-card-label">${name}</div>
+                <div class="badge-card-cond">${unlocked ? '✅ Terbuka' : b.cond}</div>
+            `;
+            grid.appendChild(div);
         });
-        
-        let isDragging = false;
-        canvas.addEventListener('mousedown', (e) => {
-            if (state.currentMode !== 'arcade') return;
-            isDragging = true;
-            const rect = canvas.getBoundingClientRect();
-            targetPlayerY = e.clientY - rect.top;
-        });
-        window.addEventListener('mouseup', () => isDragging = false);
-        canvas.addEventListener('mousemove', (e) => {
-            if (isDragging && state.currentMode === 'arcade') {
-                const rect = canvas.getBoundingClientRect();
-                targetPlayerY = e.clientY - rect.top;
-            }
-        });
-        
-        canvas.addEventListener('touchstart', (e) => {
-            if (state.currentMode !== 'arcade') return;
-            const rect = canvas.getBoundingClientRect();
-            targetPlayerY = e.touches[0].clientY - rect.top;
-        }, {passive: true});
-        canvas.addEventListener('touchmove', (e) => {
-            if (state.currentMode !== 'arcade') return;
-            const rect = canvas.getBoundingClientRect();
-            targetPlayerY = e.touches[0].clientY - rect.top;
-        }, {passive: true});
     }
 
-    function stopCanvasAnimation() {
-        cancelAnimationFrame(animId);
-        window.removeEventListener('resize', resizeCanvas);
-    }
-
-    function resizeCanvas() {
-        const container = canvas.parentElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-    }
-
-    function drawCanvas() {
-        // Mode edukasi = jalan lambat, mode arcade = cepat
-        let speedMultiplier = (state.currentMode === 'arcade') ? 1 + (state.sessionScore / 300) : 1;
-        const roadSpeed = (state.currentMode === 'arcade') ? (5 * speedMultiplier) : 1;
-
-        // Update player position smoothly (only really matters in arcade)
-        if (state.currentMode === 'arcade') {
-            playerY += (targetPlayerY - playerY) * 0.15;
-            if (playerY < 20) playerY = 20;
-            if (playerY > canvas.height - 20) playerY = canvas.height - 20;
-            targetPlayerY = Math.max(20, Math.min(canvas.height - 20, targetPlayerY));
-        } else {
-            playerY = canvas.height / 2; 
-        }
-
-        const roadImg = imgAssets['road main'];
-        if (roadImg && roadImg.complete && roadImg.naturalWidth > 0) {
-            const roadH = canvas.height;
-            const ratio = roadImg.width / roadImg.height;
-            const roadW = roadH * ratio;
-
-            roadOffset += roadSpeed; 
-            if (roadOffset >= roadW) roadOffset = 0;
-            
-            ctx.drawImage(roadImg, -roadOffset, 0, roadW, roadH);
-            ctx.drawImage(roadImg, roadW - roadOffset, 0, roadW, roadH);
-            if (roadW - roadOffset < canvas.width) {
-                ctx.drawImage(roadImg, roadW * 2 - roadOffset, 0, roadW, roadH);
-            }
-        } else {
-            ctx.fillStyle = '#444'; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = '#FFF';
-            ctx.lineWidth = 6;
-            ctx.setLineDash([30, 30]);
-            
-            roadOffset += roadSpeed;
-            if (roadOffset > 60) roadOffset = 0;
-            
-            ctx.lineDashOffset = roadOffset; 
-            
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height / 2);
-            ctx.lineTo(canvas.width, canvas.height / 2);
-            ctx.stroke();
-        }
-
-        const playerX = canvas.width * 0.15; 
-
-        // Spawn items in arcade mode
-        if (state.currentMode === 'arcade') {
-            // Traffic
-            if (Math.random() < 0.02 + (speedMultiplier * 0.005)) {
-                const types = ['car', 'truck', 'becak'];
-                const type = types[Math.floor(Math.random() * types.length)];
-                const img = imgAssets[type];
-                if (img && img.complete && img.naturalWidth > 0) {
-                    traffic.push({
-                        img: img,
-                        x: canvas.width + 100,
-                        y: 20 + Math.random() * (canvas.height - 40),
-                        speed: (2 + Math.random() * 3) * speedMultiplier
-                    });
-                }
-            }
-            
-            // Coins
-            if (Math.random() < 0.015) {
-                collectibles.push({
-                    x: canvas.width + 50,
-                    y: 20 + Math.random() * (canvas.height - 40)
-                });
-            }
-
-            // Exhaust Smoke
-            if (Math.random() < 0.5) {
-                particles.push({
-                    x: playerX - 30,
-                    y: playerY + 5,
-                    vx: -roadSpeed - Math.random() * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    size: Math.random() * 6 + 2,
-                    color: `rgba(200, 200, 200, ${0.3 + Math.random()*0.3})`,
-                    life: 20 + Math.random() * 10
-                });
-            }
-        }
-
-        // Draw and update collectibles
-        for (let i = collectibles.length - 1; i >= 0; i--) {
-            let c = collectibles[i];
-            c.x -= roadSpeed;
-            
-            ctx.fillStyle = '#FFD700';
-            ctx.beginPath();
-            ctx.arc(c.x, c.y, 15, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#DAA520';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.fillStyle = '#000';
-            ctx.font = '16px Poppins';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('⭐', c.x, c.y);
-            
-            const dx = c.x - playerX;
-            const dy = c.y - playerY;
-            if (Math.sqrt(dx*dx + dy*dy) < 40) {
-                playDing();
-                triggerConfetti();
-                state.sessionScore += 20;
-                floatingTexts.push({text: "+20", x: playerX, y: playerY - 30, color: '#FFD700', life: 30});
-                document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
-                collectibles.splice(i, 1);
-                continue;
-            }
-            if (c.x < -50) collectibles.splice(i, 1);
-        }
-
-        // Draw and update traffic
-        for (let i = traffic.length - 1; i >= 0; i--) {
-            let t = traffic[i];
-            t.x -= (t.speed + roadSpeed); 
-            
-            const h = Math.min(canvas.height * 0.35, 70);
-            const ratio = t.img.width / t.img.height;
-            const w = h * ratio;
-            
-            ctx.drawImage(t.img, t.x - w/2, t.y - h/2, w, h);
-            
-            // Collision Detection
-            if (state.currentMode === 'arcade') {
-                const dx = t.x - playerX;
-                const dy = t.y - playerY;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                
-                // Adjusted collision bounds to be slightly forgiving
-                if (dist < (h/2 + 10)) {
-                    triggerFlashShake();
-                    playBuzz();
-                    floatingTexts.push({text: "CRASH!", x: playerX, y: playerY - 30, color: '#C00000', life: 30});
-                    traffic.splice(i, 1);
-                    endGame(); 
-                    continue;
-                }
-            }
-            
-            if (t.x < -150) {
-                traffic.splice(i, 1);
-            }
-        }
-
-        // Draw Player Vehicle (Motorcycle) with dynamic tilt
-        const motorImg = imgAssets['motorcycle'];
-        const tiltAngle = (state.currentMode === 'arcade') ? ((targetPlayerY - playerY) * 0.05) : 0;
-        
-        if (motorImg && motorImg.complete && motorImg.naturalWidth > 0) {
-            const h = Math.min(canvas.height * 0.3, 60);
-            const ratio = motorImg.width / motorImg.height;
-            const w = h * ratio;
-            
-            ctx.save();
-            ctx.translate(playerX, playerY);
-            ctx.rotate(tiltAngle);
-            ctx.drawImage(motorImg, -w/2, -h/2, w, h);
-            ctx.restore();
-        } else {
-            ctx.save();
-            ctx.translate(playerX, playerY);
-            ctx.rotate(tiltAngle);
-            ctx.fillStyle = '#FFC000'; 
-            ctx.fillRect(-20, -10, 40, 20);
-            ctx.fillStyle = '#111';
-            ctx.fillRect(-15, -12, 10, 4);
-            ctx.fillRect(-15, 8, 10, 4);
-            ctx.fillRect(5, -12, 10, 4);
-            ctx.fillRect(5, 8, 10, 4);
-            ctx.restore();
-        }
-
-        // Draw Particles (Exhaust & Confetti)
-        for (let i = particles.length - 1; i >= 0; i--) {
-            let p = particles[i];
-            p.y += p.vy;
-            p.x += p.vx;
-            p.life--;
-            
-            ctx.globalAlpha = Math.max(0, p.life / 30);
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1.0;
-            
-            if (p.life <= 0) particles.splice(i, 1);
-        }
-
-        // Draw Floating Texts
-        for (let i = floatingTexts.length - 1; i >= 0; i--) {
-            let ft = floatingTexts[i];
-            ft.y -= 1.5;
-            ft.life--;
-            
-            ctx.globalAlpha = Math.max(0, ft.life / 30);
-            ctx.fillStyle = ft.color;
-            ctx.font = 'bold 24px Poppins';
-            ctx.textAlign = 'center';
-            ctx.fillText(ft.text, ft.x, ft.y);
-            ctx.globalAlpha = 1.0;
-            
-            if (ft.life <= 0) floatingTexts.splice(i, 1);
-        }
-
-        animId = requestAnimationFrame(drawCanvas);
-    }
-
-    function triggerConfetti() {
-        for(let i=0; i<30; i++) {
-            particles.push({
-                x: canvas.width / 2,
-                y: canvas.height - 50,
-                vx: (Math.random() - 0.5) * 10,
-                vy: (Math.random() - 1) * 10,
-                size: Math.random() * 6 + 2,
-                color: Math.random() > 0.5 ? '#FFC000' : '#70AD47',
-                life: 60 + Math.random() * 40
-            });
-        }
-    }
-
-    function triggerFlashShake() {
-        const overlay = document.getElementById('flash-overlay');
-        overlay.style.opacity = '1';
-        setTimeout(() => overlay.style.opacity = '0', 100);
-        
-        const container = document.getElementById('game-screen');
-        container.classList.add('shake');
-        setTimeout(() => container.classList.remove('shake'), 500);
-    }
-
-    function notImplementedYet(feature) {
-        alert(`Fitur ${feature} masih dalam pengembangan untuk fase berikutnya!`);
-    }
-
+    // --- Belajar (Ensiklopedia Rambu) ---
     function showBelajar() {
         if (!state.modesDimainkan.includes('belajar')) state.modesDimainkan.push('belajar');
-        if (state.modesDimainkan.length >= 4) awardBadge("all_modes");
 
         const list = document.getElementById('ui-rambu-list');
         list.innerHTML = '';
-        
         RAMBU_DATA.forEach(r => {
             const div = document.createElement('div');
             div.className = 'rambu-item';
@@ -882,33 +550,57 @@ const app = (function() {
             `;
             list.appendChild(div);
         });
-        
         showScreen('belajar-screen');
+    }
+
+    // --- Rangkuman UU ---
+    function showRangkumanUU() {
+        const list = document.getElementById('ui-uu-list');
+        list.innerHTML = '';
+
+        const pasalData = [
+            { pasal: "Pasal 77", isi: "Setiap pengemudi kendaraan bermotor wajib memiliki SIM sesuai jenis kendaraannya." },
+            { pasal: "Pasal 81", isi: "Syarat usia untuk SIM C (sepeda motor) minimal 17 tahun, SIM A (mobil) minimal 17 tahun." },
+            { pasal: "Pasal 106", isi: "Pengemudi wajib mengemudikan kendaraan dengan wajar dan penuh konsentrasi. Mengutamakan keselamatan pejalan kaki dan pesepeda." },
+            { pasal: "Pasal 107 ayat 2", isi: "Pengemudi sepeda motor wajib menyalakan lampu utama pada siang hari (Daytime Running Light)." },
+            { pasal: "Pasal 112", isi: "Pengemudi wajib memberikan isyarat (sein) minimal 30 meter sebelum berbelok atau berpindah lajur." },
+            { pasal: "Pasal 113", isi: "Pada persimpangan sebidang yang tidak dikendalikan, pengemudi wajib mendahulukan kendaraan dari kiri." },
+            { pasal: "Pasal 131", isi: "Pejalan kaki berhak atas ketersediaan fasilitas pendukung yang berupa trotoar, tempat penyeberangan, dan fasilitas lain." },
+            { pasal: "Pasal 134", isi: "Pengguna jalan wajib memberikan prioritas jalan kepada kendaraan pemadam kebakaran, ambulans, dan kendaraan dinas khusus." },
+            { pasal: "Pasal 281", isi: "Mengemudikan kendaraan bermotor tanpa SIM dipidana kurungan paling lama 4 bulan atau denda Rp1.000.000." },
+            { pasal: "Pasal 283", isi: "Menggunakan telepon genggam saat mengemudi dipidana kurungan paling lama 3 bulan atau denda Rp750.000." },
+            { pasal: "Pasal 291", isi: "Tidak mengenakan helm SNI saat mengendarai sepeda motor dipidana kurungan paling lama 1 bulan atau denda Rp250.000." }
+        ];
+
+        pasalData.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'uu-item';
+            div.innerHTML = `<h4>📌 ${p.pasal}</h4><p>${p.isi}</p>`;
+            list.appendChild(div);
+        });
+
+        showScreen('uu-screen');
     }
 
     // --- Initialization ---
     window.onload = () => {
-        preloadImages(() => {
-            setTimeout(() => {
-                loadData();
-                if (!state.modesDimainkan) state.modesDimainkan = [];
-                showScreen('main-menu');
-                if (state.nama) {
-                    document.getElementById('player-name').value = state.nama;
-                }
-            }, 1000); // Fake loading screen for polish
-        });
+        setTimeout(() => {
+            loadData();
+            if (!state.modesDimainkan) state.modesDimainkan = [];
+            showScreen('main-menu');
+            if (state.nama) {
+                document.getElementById('player-name').value = state.nama;
+            }
+        }, 1200);
     };
 
-    // Expose public methods
+    // --- Public API ---
     return {
         startGame,
-        startArcade,
         nextScenario,
         showScreen,
-        showGameMenu,
-        showEdukasiMenu,
         showBelajar,
-        notImplementedYet
+        showRangkumanUU,
+        quitGame
     };
 })();
