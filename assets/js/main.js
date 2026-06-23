@@ -542,6 +542,8 @@ const app = (function() {
     let roadOffset = 0;
     let particles = [];
     let traffic = [];
+    let collectibles = [];
+    let floatingTexts = [];
     let playerY = 100;
     let targetPlayerY = 100;
     let controlsSetup = false;
@@ -552,6 +554,8 @@ const app = (function() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         traffic = [];
+        collectibles = [];
+        floatingTexts = [];
         playerY = canvas.height / 2;
         targetPlayerY = playerY;
         animId = requestAnimationFrame(drawCanvas);
@@ -614,7 +618,8 @@ const app = (function() {
 
     function drawCanvas() {
         // Mode edukasi = jalan lambat, mode arcade = cepat
-        const roadSpeed = (state.currentMode === 'arcade') ? 5 : 1;
+        let speedMultiplier = (state.currentMode === 'arcade') ? 1 + (state.sessionScore / 300) : 1;
+        const roadSpeed = (state.currentMode === 'arcade') ? (5 * speedMultiplier) : 1;
 
         // Update player position smoothly (only really matters in arcade)
         if (state.currentMode === 'arcade') {
@@ -623,7 +628,6 @@ const app = (function() {
             if (playerY > canvas.height - 20) playerY = canvas.height - 20;
             targetPlayerY = Math.max(20, Math.min(canvas.height - 20, targetPlayerY));
         } else {
-            // Auto-center in non-arcade mode
             playerY = canvas.height / 2; 
         }
 
@@ -636,17 +640,15 @@ const app = (function() {
             roadOffset += roadSpeed; 
             if (roadOffset >= roadW) roadOffset = 0;
             
-            // Draw Side Scrolling Road
             ctx.drawImage(roadImg, -roadOffset, 0, roadW, roadH);
             ctx.drawImage(roadImg, roadW - roadOffset, 0, roadW, roadH);
             if (roadW - roadOffset < canvas.width) {
                 ctx.drawImage(roadImg, roadW * 2 - roadOffset, 0, roadW, roadH);
             }
         } else {
-            ctx.fillStyle = '#444'; // Asphalt
+            ctx.fillStyle = '#444'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw moving dashed lines horizontally
             ctx.strokeStyle = '#FFF';
             ctx.lineWidth = 6;
             ctx.setLineDash([30, 30]);
@@ -662,24 +664,80 @@ const app = (function() {
             ctx.stroke();
         }
 
-        // Spawn random traffic only in arcade mode
-        if (state.currentMode === 'arcade' && Math.random() < 0.02) {
-            const types = ['car', 'truck', 'becak'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            const img = imgAssets[type];
-            if (img && img.complete && img.naturalWidth > 0) {
-                traffic.push({
-                    img: img,
-                    x: canvas.width + 100,
-                    y: 20 + Math.random() * (canvas.height - 40),
-                    speed: 2 + Math.random() * 3
+        const playerX = canvas.width * 0.15; 
+
+        // Spawn items in arcade mode
+        if (state.currentMode === 'arcade') {
+            // Traffic
+            if (Math.random() < 0.02 + (speedMultiplier * 0.005)) {
+                const types = ['car', 'truck', 'becak'];
+                const type = types[Math.floor(Math.random() * types.length)];
+                const img = imgAssets[type];
+                if (img && img.complete && img.naturalWidth > 0) {
+                    traffic.push({
+                        img: img,
+                        x: canvas.width + 100,
+                        y: 20 + Math.random() * (canvas.height - 40),
+                        speed: (2 + Math.random() * 3) * speedMultiplier
+                    });
+                }
+            }
+            
+            // Coins
+            if (Math.random() < 0.015) {
+                collectibles.push({
+                    x: canvas.width + 50,
+                    y: 20 + Math.random() * (canvas.height - 40)
+                });
+            }
+
+            // Exhaust Smoke
+            if (Math.random() < 0.5) {
+                particles.push({
+                    x: playerX - 30,
+                    y: playerY + 5,
+                    vx: -roadSpeed - Math.random() * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    size: Math.random() * 6 + 2,
+                    color: `rgba(200, 200, 200, ${0.3 + Math.random()*0.3})`,
+                    life: 20 + Math.random() * 10
                 });
             }
         }
 
-        // Draw and update traffic
-        const playerX = canvas.width * 0.15; 
+        // Draw and update collectibles
+        for (let i = collectibles.length - 1; i >= 0; i--) {
+            let c = collectibles[i];
+            c.x -= roadSpeed;
+            
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.fillStyle = '#000';
+            ctx.font = '16px Poppins';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⭐', c.x, c.y);
+            
+            const dx = c.x - playerX;
+            const dy = c.y - playerY;
+            if (Math.sqrt(dx*dx + dy*dy) < 40) {
+                playDing();
+                triggerConfetti();
+                state.sessionScore += 20;
+                floatingTexts.push({text: "+20", x: playerX, y: playerY - 30, color: '#FFD700', life: 30});
+                document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
+                collectibles.splice(i, 1);
+                continue;
+            }
+            if (c.x < -50) collectibles.splice(i, 1);
+        }
 
+        // Draw and update traffic
         for (let i = traffic.length - 1; i >= 0; i--) {
             let t = traffic[i];
             t.x -= (t.speed + roadSpeed); 
@@ -696,11 +754,13 @@ const app = (function() {
                 const dy = t.y - playerY;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
-                if (dist < (h/2 + 20)) {
+                // Adjusted collision bounds to be slightly forgiving
+                if (dist < (h/2 + 10)) {
                     triggerFlashShake();
                     playBuzz();
+                    floatingTexts.push({text: "CRASH!", x: playerX, y: playerY - 30, color: '#C00000', life: 30});
                     traffic.splice(i, 1);
-                    endGame(); // Game Over
+                    endGame(); 
                     continue;
                 }
             }
@@ -710,35 +770,65 @@ const app = (function() {
             }
         }
 
-        // Draw Player Vehicle (Motorcycle)
+        // Draw Player Vehicle (Motorcycle) with dynamic tilt
         const motorImg = imgAssets['motorcycle'];
+        const tiltAngle = (state.currentMode === 'arcade') ? ((targetPlayerY - playerY) * 0.05) : 0;
         
         if (motorImg && motorImg.complete && motorImg.naturalWidth > 0) {
             const h = Math.min(canvas.height * 0.3, 60);
             const ratio = motorImg.width / motorImg.height;
             const w = h * ratio;
-            ctx.drawImage(motorImg, playerX - w/2, playerY - h/2, w, h);
+            
+            ctx.save();
+            ctx.translate(playerX, playerY);
+            ctx.rotate(tiltAngle);
+            ctx.drawImage(motorImg, -w/2, -h/2, w, h);
+            ctx.restore();
         } else {
+            ctx.save();
+            ctx.translate(playerX, playerY);
+            ctx.rotate(tiltAngle);
             ctx.fillStyle = '#FFC000'; 
-            ctx.fillRect(playerX - 20, playerY - 10, 40, 20);
+            ctx.fillRect(-20, -10, 40, 20);
             ctx.fillStyle = '#111';
-            ctx.fillRect(playerX - 15, playerY - 12, 10, 4);
-            ctx.fillRect(playerX - 15, playerY + 8, 10, 4);
-            ctx.fillRect(playerX + 5, playerY - 12, 10, 4);
-            ctx.fillRect(playerX + 5, playerY + 8, 10, 4);
+            ctx.fillRect(-15, -12, 10, 4);
+            ctx.fillRect(-15, 8, 10, 4);
+            ctx.fillRect(5, -12, 10, 4);
+            ctx.fillRect(5, 8, 10, 4);
+            ctx.restore();
         }
-        
-        // Draw Particles
+
+        // Draw Particles (Exhaust & Confetti)
         for (let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i];
             p.y += p.vy;
             p.x += p.vx;
             p.life--;
             
+            ctx.globalAlpha = Math.max(0, p.life / 30);
             ctx.fillStyle = p.color;
-            ctx.fillRect(p.x, p.y, p.size, p.size);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
             
             if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        // Draw Floating Texts
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            let ft = floatingTexts[i];
+            ft.y -= 1.5;
+            ft.life--;
+            
+            ctx.globalAlpha = Math.max(0, ft.life / 30);
+            ctx.fillStyle = ft.color;
+            ctx.font = 'bold 24px Poppins';
+            ctx.textAlign = 'center';
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.globalAlpha = 1.0;
+            
+            if (ft.life <= 0) floatingTexts.splice(i, 1);
         }
 
         animId = requestAnimationFrame(drawCanvas);
