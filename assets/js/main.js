@@ -109,6 +109,9 @@ const app = (function() {
             renderLeaderboard();
         }
     }
+    
+    function showGameMenu() { showScreen('game-menu'); }
+    function showEdukasiMenu() { showScreen('edukasi-menu'); }
 
     // --- Gamification ---
     function checkLevelUp() {
@@ -156,15 +159,15 @@ const app = (function() {
     function startGame(mode) {
         const nameInput = document.getElementById('player-name').value.trim();
         if (!nameInput) {
-            alert("Silakan masukkan nama Anda terlebih dahulu!");
+            alert("Silakan masukkan nama Anda di menu utama terlebih dahulu!");
+            showScreen('main-menu');
             return;
         }
 
         state.nama = nameInput;
         state.currentMode = mode;
         state.scenarioIndex = 0;
-        state.totalPoin = 0; // Reset for this session? Or accumulate? Spec implies accumulating but for a session score we need sessionScore.
-        // Let's keep a sessionScore to display at the end, and add it to totalPoin
+        state.totalPoin = state.totalPoin || 0; 
         state.sessionScore = 0;
         state.combo = 0;
         state.correctCount = 0;
@@ -180,17 +183,46 @@ const app = (function() {
         document.getElementById('ui-score').textContent = `Skor: 0`;
 
         const uiTimer = document.getElementById('ui-timer');
-        if (mode === 'tantangan') {
+        uiTimer.style.display = 'none';
+
+        const gameScreen = document.getElementById('game-screen');
+        gameScreen.classList.remove('arcade-mode');
+
+        if (mode === 'tantangan' || mode === 'tebak_rambu' || mode === 'arcade') {
             uiTimer.style.display = 'inline';
             uiTimer.textContent = '⏱️ 0s';
             uiTimer.classList.remove('timer-warning');
-        } else {
-            uiTimer.style.display = 'none';
         }
 
         showScreen('game-screen');
         startCanvasAnimation();
-        loadScenario();
+
+        if (mode === 'arcade') {
+            gameScreen.classList.add('arcade-mode');
+            startArcadeLogic();
+        } else if (mode === 'tebak_rambu') {
+            loadTebakRambu();
+        } else {
+            loadScenario();
+        }
+    }
+    
+    function startArcade() {
+        startGame('arcade');
+    }
+
+    function startArcadeLogic() {
+        state.sessionScore = 0;
+        state.timeTaken = 0;
+        clearInterval(state.timerInterval);
+        
+        const uiTimer = document.getElementById('ui-timer');
+        state.timerInterval = setInterval(() => {
+            state.timeTaken++;
+            state.sessionScore += 5; // +5 points per second survived
+            uiTimer.textContent = `⏱️ ${state.timeTaken}s`;
+            document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
+        }, 1000);
     }
 
     function loadScenario() {
@@ -203,7 +235,7 @@ const app = (function() {
         const sc = data[state.scenarioIndex];
         const prefix = state.currentMode === 'kuis' ? 'Soal' : 'Skenario';
         document.getElementById('ui-scenario-counter').textContent = `${prefix} ${state.scenarioIndex + 1}/${data.length}`;
-        document.getElementById('ui-scenario-text').textContent = sc.situasi;
+        document.getElementById('ui-scenario-text').innerHTML = sc.situasi;
 
         const pb = document.getElementById('progress-bar');
         pb.style.width = `${((state.scenarioIndex) / data.length) * 100}%`;
@@ -238,6 +270,68 @@ const app = (function() {
                 }
             }, 1000);
         }
+    }
+
+    let tebakRambuData = [];
+    
+    function loadTebakRambu() {
+        if (state.scenarioIndex === 0) {
+            tebakRambuData = [...RAMBU_DATA].sort(() => 0.5 - Math.random()).slice(0, 10);
+        }
+        
+        if (state.scenarioIndex >= tebakRambuData.length) {
+            endGame();
+            return;
+        }
+
+        const rambu = tebakRambuData[state.scenarioIndex];
+        document.getElementById('ui-scenario-counter').textContent = `Tebak Rambu ${state.scenarioIndex + 1}/${tebakRambuData.length}`;
+        
+        document.getElementById('ui-scenario-text').innerHTML = `
+            <div style="text-align:center; font-size: 60px; margin: 10px 0;">
+                ${rambu.ikon}
+            </div>
+            <div style="text-align:center; font-weight: bold;">Apa arti rambu di atas?</div>
+        `;
+
+        const pb = document.getElementById('progress-bar');
+        pb.style.width = `${((state.scenarioIndex) / tebakRambuData.length) * 100}%`;
+
+        const choicesContainer = document.getElementById('ui-choices');
+        choicesContainer.innerHTML = '';
+
+        const wrongChoices = RAMBU_DATA.filter(r => r.nama !== rambu.nama).sort(() => 0.5 - Math.random()).slice(0, 3);
+        const options = [...wrongChoices, rambu].sort(() => 0.5 - Math.random());
+        
+        options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            const letter = String.fromCharCode(65 + idx);
+            btn.innerHTML = `<strong>[${letter}]</strong> &nbsp; ${opt.nama}`;
+            btn.onclick = () => handleTebakRambuAnswer(opt.nama === rambu.nama, btn, rambu);
+            choicesContainer.appendChild(btn);
+        });
+
+        document.getElementById('flash-overlay').style.opacity = '0';
+        
+        clearInterval(state.timerInterval);
+        state.timeTaken = 10;
+        const uiTimer = document.getElementById('ui-timer');
+        uiTimer.textContent = `⏱️ 10s`;
+        uiTimer.classList.remove('timer-warning');
+        
+        state.timerInterval = setInterval(() => {
+            state.timeTaken--;
+            uiTimer.textContent = `⏱️ ${state.timeTaken}s`;
+            if (state.timeTaken <= 3) {
+                uiTimer.classList.add('timer-warning');
+            }
+            if (state.timeTaken <= 0) {
+                clearInterval(state.timerInterval);
+                const fakeBtn = document.createElement('div');
+                handleTebakRambuAnswer(false, fakeBtn, rambu);
+            }
+        }, 1000);
     }
 
     function handleAnswer(selectedId, btnElement) {
@@ -295,6 +389,46 @@ const app = (function() {
         saveData();
     }
 
+    function handleTebakRambuAnswer(isCorrect, btnElement, rambu) {
+        clearInterval(state.timerInterval);
+        document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            playDing();
+            triggerConfetti();
+            
+            let pointsGained = 15;
+            state.combo++;
+            state.correctCount++;
+            
+            if (state.combo >= 3) {
+                pointsGained += 5;
+                showComboPopup();
+            }
+            
+            state.sessionScore += pointsGained;
+            state.totalPoin += pointsGained;
+            
+            showFeedback(true, pointsGained, { penjelasan: rambu.deskripsi, pasal: rambu.tipe });
+        } else {
+            btnElement.classList.add('wrong');
+            playBuzz();
+            triggerFlashShake();
+            state.combo = 0;
+            
+            document.querySelectorAll('.choice-btn').forEach(b => {
+                if (b.innerHTML.includes(rambu.nama)) b.classList.add('correct');
+            });
+            
+            showFeedback(false, 0, { penjelasan: rambu.deskripsi, pasal: rambu.tipe });
+        }
+
+        document.getElementById('ui-score').textContent = `Skor: ${state.sessionScore}`;
+        checkLevelUp();
+        saveData();
+    }
+
     function showComboPopup() {
         const p = document.getElementById('ui-combo-popup');
         p.classList.remove('hidden');
@@ -318,12 +452,17 @@ const app = (function() {
 
     function nextScenario() {
         state.scenarioIndex++;
-        const data = getActiveData();
-        if (state.scenarioIndex < data.length) {
+        if (state.currentMode === 'tebak_rambu') {
             showScreen('game-screen');
-            loadScenario();
+            loadTebakRambu();
         } else {
-            endGame();
+            const data = getActiveData();
+            if (state.scenarioIndex < data.length) {
+                showScreen('game-screen');
+                loadScenario();
+            } else {
+                endGame();
+            }
         }
     }
 
@@ -403,6 +542,9 @@ const app = (function() {
     let roadOffset = 0;
     let particles = [];
     let traffic = [];
+    let playerY = 100;
+    let targetPlayerY = 100;
+    let controlsSetup = false;
     
     function startCanvasAnimation() {
         canvas = document.getElementById('game-canvas');
@@ -410,7 +552,53 @@ const app = (function() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         traffic = [];
+        playerY = canvas.height / 2;
+        targetPlayerY = playerY;
         animId = requestAnimationFrame(drawCanvas);
+        setupControls();
+    }
+
+    function setupControls() {
+        if (controlsSetup) return;
+        controlsSetup = true;
+
+        window.addEventListener('keydown', (e) => {
+            if (state.currentMode !== 'arcade') return;
+            const speed = 25;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                targetPlayerY -= speed;
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                targetPlayerY += speed;
+                e.preventDefault();
+            }
+        });
+        
+        let isDragging = false;
+        canvas.addEventListener('mousedown', (e) => {
+            if (state.currentMode !== 'arcade') return;
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            targetPlayerY = e.clientY - rect.top;
+        });
+        window.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging && state.currentMode === 'arcade') {
+                const rect = canvas.getBoundingClientRect();
+                targetPlayerY = e.clientY - rect.top;
+            }
+        });
+        
+        canvas.addEventListener('touchstart', (e) => {
+            if (state.currentMode !== 'arcade') return;
+            const rect = canvas.getBoundingClientRect();
+            targetPlayerY = e.touches[0].clientY - rect.top;
+        }, {passive: true});
+        canvas.addEventListener('touchmove', (e) => {
+            if (state.currentMode !== 'arcade') return;
+            const rect = canvas.getBoundingClientRect();
+            targetPlayerY = e.touches[0].clientY - rect.top;
+        }, {passive: true});
     }
 
     function stopCanvasAnimation() {
@@ -425,94 +613,119 @@ const app = (function() {
     }
 
     function drawCanvas() {
-        const roadImg = imgAssets['road main'];
-        if (roadImg && roadImg.complete && roadImg.naturalHeight > 0) {
-            const roadW = canvas.width;
-            const ratio = roadImg.width / roadImg.height;
-            const roadH = roadW / ratio;
+        // Mode edukasi = jalan lambat, mode arcade = cepat
+        const roadSpeed = (state.currentMode === 'arcade') ? 5 : 1;
 
-            roadOffset += 5; // speed
-            if (roadOffset >= roadH) roadOffset = 0;
+        // Update player position smoothly (only really matters in arcade)
+        if (state.currentMode === 'arcade') {
+            playerY += (targetPlayerY - playerY) * 0.15;
+            if (playerY < 20) playerY = 20;
+            if (playerY > canvas.height - 20) playerY = canvas.height - 20;
+            targetPlayerY = Math.max(20, Math.min(canvas.height - 20, targetPlayerY));
+        } else {
+            // Auto-center in non-arcade mode
+            playerY = canvas.height / 2; 
+        }
+
+        const roadImg = imgAssets['road main'];
+        if (roadImg && roadImg.complete && roadImg.naturalWidth > 0) {
+            const roadH = canvas.height;
+            const ratio = roadImg.width / roadImg.height;
+            const roadW = roadH * ratio;
+
+            roadOffset += roadSpeed; 
+            if (roadOffset >= roadW) roadOffset = 0;
             
-            ctx.drawImage(roadImg, 0, roadOffset - roadH, roadW, roadH);
-            ctx.drawImage(roadImg, 0, roadOffset, roadW, roadH);
-            if (roadOffset + roadH < canvas.height) {
-                ctx.drawImage(roadImg, 0, roadOffset + roadH, roadW, roadH);
+            // Draw Side Scrolling Road
+            ctx.drawImage(roadImg, -roadOffset, 0, roadW, roadH);
+            ctx.drawImage(roadImg, roadW - roadOffset, 0, roadW, roadH);
+            if (roadW - roadOffset < canvas.width) {
+                ctx.drawImage(roadImg, roadW * 2 - roadOffset, 0, roadW, roadH);
             }
         } else {
             ctx.fillStyle = '#444'; // Asphalt
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw moving dashed lines
+            // Draw moving dashed lines horizontally
             ctx.strokeStyle = '#FFF';
             ctx.lineWidth = 6;
             ctx.setLineDash([30, 30]);
             
-            roadOffset += 5; // speed
+            roadOffset += roadSpeed;
             if (roadOffset > 60) roadOffset = 0;
             
-            ctx.lineDashOffset = -roadOffset;
+            ctx.lineDashOffset = roadOffset; 
             
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
             ctx.stroke();
         }
 
-        // Spawn random traffic
-        if (Math.random() < 0.02) {
+        // Spawn random traffic only in arcade mode
+        if (state.currentMode === 'arcade' && Math.random() < 0.02) {
             const types = ['car', 'truck', 'becak'];
             const type = types[Math.floor(Math.random() * types.length)];
             const img = imgAssets[type];
-            if (img && img.complete && img.naturalHeight > 0) {
-                // Spawn on the left lane (about 25% of screen width)
+            if (img && img.complete && img.naturalWidth > 0) {
                 traffic.push({
                     img: img,
-                    x: canvas.width * 0.25,
-                    y: -100,
+                    x: canvas.width + 100,
+                    y: 20 + Math.random() * (canvas.height - 40),
                     speed: 2 + Math.random() * 3
                 });
             }
         }
 
         // Draw and update traffic
+        const playerX = canvas.width * 0.15; 
+
         for (let i = traffic.length - 1; i >= 0; i--) {
             let t = traffic[i];
-            t.y += t.speed + 5; // moves down faster than road
+            t.x -= (t.speed + roadSpeed); 
             
-            const w = Math.min(canvas.width * 0.25, 100);
+            const h = Math.min(canvas.height * 0.35, 70);
             const ratio = t.img.width / t.img.height;
-            const h = w / ratio;
+            const w = h * ratio;
             
-            // Draw traffic upside down if it's on the opposite lane? 
-            // In Indonesia, we drive on the left. So if player is on the left, opposite lane is on the right.
-            // Let's just draw them normally.
             ctx.drawImage(t.img, t.x - w/2, t.y - h/2, w, h);
             
-            if (t.y > canvas.height + 150) {
+            // Collision Detection
+            if (state.currentMode === 'arcade') {
+                const dx = t.x - playerX;
+                const dy = t.y - playerY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist < (h/2 + 20)) {
+                    triggerFlashShake();
+                    playBuzz();
+                    traffic.splice(i, 1);
+                    endGame(); // Game Over
+                    continue;
+                }
+            }
+            
+            if (t.x < -150) {
                 traffic.splice(i, 1);
             }
         }
 
         // Draw Player Vehicle (Motorcycle)
         const motorImg = imgAssets['motorcycle'];
-        const vX = canvas.width * 0.75; // Player on the right lane (assuming driving on left means left lane is slow/opposite? Wait. In Indonesia, keep left. Left lane is our lane, right lane is opposite or overtaking. Let's put player at 0.4 left, and opposite traffic at 0.75 right. Or vice versa.)
-        // Actually, if we drive on the left, our lane is the left half. Opposite lane is the right half.
-        // Let's keep player at center-left:
-        const playerX = canvas.width * 0.35;
-        const vY = canvas.height - 40;
         
-        if (motorImg && motorImg.complete && motorImg.naturalHeight > 0) {
-            const w = Math.min(canvas.width * 0.2, 80);
+        if (motorImg && motorImg.complete && motorImg.naturalWidth > 0) {
+            const h = Math.min(canvas.height * 0.3, 60);
             const ratio = motorImg.width / motorImg.height;
-            const h = w / ratio;
-            ctx.drawImage(motorImg, playerX - w/2, vY - h/2 - 20, w, h);
+            const w = h * ratio;
+            ctx.drawImage(motorImg, playerX - w/2, playerY - h/2, w, h);
         } else {
-            ctx.fillStyle = '#FFC000'; // Accent color for body
-            ctx.fillRect(playerX - 10, vY - 30, 20, 40);
-            ctx.fillStyle = '#111'; // wheels
-            ctx.fillRect(playerX - 12, vY - 20, 4, 15);
-            ctx.fillRect(playerX + 8, vY - 20, 4, 15);
+            ctx.fillStyle = '#FFC000'; 
+            ctx.fillRect(playerX - 20, playerY - 10, 40, 20);
+            ctx.fillStyle = '#111';
+            ctx.fillRect(playerX - 15, playerY - 12, 10, 4);
+            ctx.fillRect(playerX - 15, playerY + 8, 10, 4);
+            ctx.fillRect(playerX + 5, playerY - 12, 10, 4);
+            ctx.fillRect(playerX + 5, playerY + 8, 10, 4);
         }
         
         // Draw Particles
@@ -600,8 +813,11 @@ const app = (function() {
     // Expose public methods
     return {
         startGame,
+        startArcade,
         nextScenario,
         showScreen,
+        showGameMenu,
+        showEdukasiMenu,
         showBelajar,
         notImplementedYet
     };

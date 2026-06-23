@@ -37,23 +37,58 @@
             </div>
 
             <div class="menu-buttons">
-                <button id="btn-mode-skenario" class="btn btn-primary" onclick="app.startGame('skenario')">
-                    🚦 Mode Skenario
+                <button class="btn btn-primary btn-large" onclick="app.showGameMenu()">
+                    🎮 Area Bermain
                 </button>
-                <button id="btn-mode-kuis" class="btn btn-secondary" onclick="app.startGame('kuis')">
-                    📚 Mode Kuis UU
-                </button>
-                <button id="btn-mode-tantangan" class="btn btn-secondary" onclick="app.startGame('tantangan')">
-                    🏁 Mode Tantangan
-                </button>
-                <button id="btn-mode-belajar" class="btn btn-secondary" onclick="app.showBelajar()">
-                    📖 Mode Belajar
+                <button class="btn btn-primary btn-large" onclick="app.showEdukasiMenu()">
+                    📚 Area Edukasi
                 </button>
             </div>
 
             <button id="btn-leaderboard" class="btn btn-outline" onclick="app.showScreen('leaderboard')">
                 🏆 Leaderboard
             </button>
+        </main>
+    </div>
+
+    <!-- GAME MENU SCREEN -->
+    <div id="game-menu" class="screen">
+        <header class="menu-header">
+            <div class="logo">🎮 AREA BERMAIN</div>
+            <p class="tagline">"Uji Ketangkasan dan Kecepatanmu!"</p>
+        </header>
+        <main class="menu-content" style="max-width: 500px; margin: 0 auto;">
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="app.startArcade()">
+                    🏍️ Laju Menghindar (Arcade)
+                </button>
+                <button class="btn btn-secondary" onclick="app.startGame('tebak_rambu')">
+                    🛑 Tebak Rambu Cepat
+                </button>
+            </div>
+            <button class="btn btn-outline" onclick="app.showScreen('main-menu')">← Kembali</button>
+        </main>
+    </div>
+
+    <!-- EDUKASI MENU SCREEN -->
+    <div id="edukasi-menu" class="screen">
+        <header class="menu-header">
+            <div class="logo">📚 AREA EDUKASI</div>
+            <p class="tagline">"Tingkatkan Pengetahuan Keselamatan Jalan Raya"</p>
+        </header>
+        <main class="menu-content" style="max-width: 500px; margin: 0 auto;">
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="app.startGame('skenario')">
+                    🚦 Mode Skenario Simulasi
+                </button>
+                <button class="btn btn-secondary" onclick="app.startGame('kuis')">
+                    📝 Mode Kuis UU LLAJ
+                </button>
+                <button class="btn btn-secondary" onclick="app.showBelajar()">
+                    📖 Ensiklopedia Rambu
+                </button>
+            </div>
+            <button class="btn btn-outline" onclick="app.showScreen('main-menu')">← Kembali</button>
         </main>
     </div>
 
