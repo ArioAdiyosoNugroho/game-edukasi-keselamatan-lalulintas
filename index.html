@@ -6,6 +6,9 @@
     <title>LajuAman - Game Edukasi Keselamatan Lalu Lintas</title>
     <meta name="description" content="Game edukasi interaktif keselamatan lalu lintas untuk pelajar Indonesia. Belajar UU No. 22 Tahun 2009 dengan cara yang menyenangkan.">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons untuk Desain Ikon Modern -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
@@ -98,6 +101,30 @@
                         <h3>📝 Kuis Cerdas UU LLAJ</h3>
                         <p>Jawab 20 pertanyaan tentang UU No. 22 Tahun 2009 dan peraturan lalu lintas.</p>
                         <span class="game-card-tag">20 Soal</span>
+                    </div>
+                </button>
+                <button class="game-card" onclick="app.startGame('puzzle')">
+                    <img src="assets/image/maskot.png" alt="Puzzle" class="game-card-img">
+                    <div class="game-card-body">
+                        <h3>🧩 Traffic Tap Puzzle</h3>
+                        <p>Kelola persimpangan padat! Ketuk mobil untuk mengatur lalu lintas.</p>
+                        <span class="game-card-tag">8 Level</span>
+                    </div>
+                </button>
+                <button class="game-card" onclick="app.startGame('slowcars')">
+                    <img src="assets/image/perempatan.png" alt="Slow Cars" class="game-card-img">
+                    <div class="game-card-body">
+                        <h3>🚗 Slow Cars Puzzle</h3>
+                        <p>Atur kecepatan mobil agar tidak tabrakan di persimpangan!</p>
+                        <span class="game-card-tag">Tak Terbatas</span>
+                    </div>
+                </button>
+                <button class="game-card" onclick="app.startGame('bus')">
+                    <img src="assets/image/bg-main.png" alt="Bus Simulator" class="game-card-img">
+                    <div class="game-card-body">
+                        <h3>🚌 Supir Bus Cilik</h3>
+                        <p>Antar siswa ke sekolah dengan aman! Patuhi rambu lalu lintas.</p>
+                        <span class="game-card-tag">Simulator</span>
                     </div>
                 </button>
             </div>
@@ -258,6 +285,315 @@
         </div>
     </div>
 
+    <!-- PUZZLE SCREEN (Traffic Tap Puzzle) -->
+    <div id="puzzle-screen" class="screen">
+        <div class="puzzle-header">
+            <button class="btn-back" onclick="app.quitGame()">✕</button>
+            <div class="puzzle-title">🚦 PENGENDALI LALU LINTAS</div>
+            <div class="puzzle-stats">
+                <div class="puzzle-stat-box">
+                    <span>Target</span>
+                    <strong id="pzl-target">0</strong>
+                </div>
+                <div class="puzzle-stat-box">
+                    <span>Lolos</span>
+                    <strong id="pzl-score" style="color:var(--success)">0</strong>
+                </div>
+            </div>
+            <div class="puzzle-controls">
+                <button id="pzl-btn-sound" class="pzl-icon-btn">🔊</button>
+                <button id="pzl-btn-pause" class="pzl-icon-btn">⏸️</button>
+            </div>
+        </div>
+        
+        <div class="puzzle-game-area" style="display: flex; align-items: center; justify-content: center; padding: 10px;">
+            <canvas id="puzzleCanvas" width="800" height="600" style="width: 100%; max-width: 800px; height: auto; aspect-ratio: 4/3; object-fit: contain; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 12px;"></canvas>
+            
+            <!-- Level Select Overlay -->
+            <div id="pzl-level-select" class="pzl-overlay">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-bounce">🚗</div>
+                    <h2>PILIH LEVEL</h2>
+                    <p>Kelola persimpangan lalu lintas agar aman!</p>
+                    <div class="pzl-levels-grid" id="pzl-levels-container">
+                        <!-- Levels injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Level Overlay -->
+            <div id="pzl-start-menu" class="pzl-overlay hidden">
+                <div class="pzl-modal">
+                    <h2 id="pzl-lvl-title">LEVEL 1</h2>
+                    <p id="pzl-lvl-desc" style="margin-bottom:15px">Target: Loloskan 10 Mobil</p>
+                    <div class="pzl-guide">
+                        <div class="pzl-guide-item" style="border-color:#3b82f6"><span style="font-size:24px">🚗</span><br>Normal</div>
+                        <div class="pzl-guide-item" style="border-color:#ef4444"><span style="font-size:24px">🛑</span><br>Berhenti</div>
+                        <div class="pzl-guide-item" style="border-color:#f59e0b"><span style="font-size:24px">⚡</span><br>Ngebut!</div>
+                    </div>
+                    <p style="font-size:12px; margin-bottom:20px">💡 Ketuk mobil untuk mengubah kecepatan</p>
+                    <button id="pzl-btn-play" class="btn btn-primary">MULAI MENGATUR</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('pzl-start-menu').classList.add('hidden'); document.getElementById('pzl-level-select').classList.remove('hidden');" style="margin-top:10px">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Game Over Overlay -->
+            <div id="pzl-game-over" class="pzl-overlay hidden" style="background:rgba(192,0,0,0.8)">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-shake">💥</div>
+                    <h2 style="color:var(--danger-light)">TABRAKAN!</h2>
+                    <p style="margin-bottom:20px">Lalu lintas tidak aman.</p>
+                    <div class="pzl-result-box">
+                        <p>Mobil Lolos: <strong id="pzl-final-score">0</strong></p>
+                    </div>
+                    <button id="pzl-btn-restart" class="btn btn-primary">ULANGI LEVEL</button>
+                    <button class="btn btn-outline" onclick="TrafficPuzzle.showLevelSelect()" style="margin-top:10px">Pilih Level</button>
+                </div>
+            </div>
+
+            <!-- Level Complete Overlay -->
+            <div id="pzl-level-complete" class="pzl-overlay hidden" style="background:rgba(112,173,71,0.8)">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-bounce">🏆</div>
+                    <h2>LEVEL SELESAI!</h2>
+                    <p style="margin-bottom:20px">Persimpangan aman terkendali.</p>
+                    <div class="pzl-stars-container" id="pzl-stars-display">⭐⭐⭐</div>
+                    <button id="pzl-btn-next" class="btn btn-primary">LEVEL SELANJUTNYA</button>
+                    <button class="btn btn-outline" onclick="TrafficPuzzle.showLevelSelect()" style="margin-top:10px">Pilih Level</button>
+                </div>
+            </div>
+
+            <!-- Pause Overlay -->
+            <div id="pzl-pause-screen" class="pzl-overlay hidden">
+                <div class="pzl-modal">
+                    <div style="font-size:50px; margin-bottom:10px">⏸️</div>
+                    <h2>GAME DIJEDA</h2>
+                    <button id="pzl-btn-resume" class="btn btn-primary" style="margin-top:20px">LANJUTKAN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- SLOW CARS SCREEN -->
+    <div id="slowcars-screen" class="screen">
+        <div class="puzzle-header">
+            <button class="btn-back" onclick="app.quitGame()">✕</button>
+            <div class="puzzle-title">🚗 SLOW CARS PUZZLE</div>
+            <div class="puzzle-stats">
+                <div class="puzzle-stat-box">
+                    <span>Skor</span>
+                    <strong id="slw-score-display">0</strong>
+                </div>
+                <div class="puzzle-stat-box">
+                    <span>Tertinggi</span>
+                    <strong id="slw-highscore-display" style="color:var(--success)">0</strong>
+                </div>
+            </div>
+            <div class="puzzle-controls">
+                <button id="slw-btn-sound" class="pzl-icon-btn">🔊</button>
+                <button id="slw-btn-pause" class="pzl-icon-btn">⏸️</button>
+            </div>
+        </div>
+        
+        <div class="puzzle-game-area">
+            <canvas id="slowCarsCanvas" width="800" height="600" style="width: 100%; max-width: 800px; height: auto; aspect-ratio: 4/3; object-fit: contain; display: block; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 12px;"></canvas>
+            
+            <!-- Start Modal -->
+            <div id="slw-start-menu" class="pzl-overlay">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-bounce">🚗</div>
+                    <h2>SLOW CARS</h2>
+                    <p>Atur kecepatan mobil agar tidak tabrakan di persimpangan!</p>
+                    <p style="font-size:12px; margin-bottom:20px">💡 Ketuk mobil untuk mengganti: Normal ➔ Cepat ➔ Berhenti</p>
+                    <button id="slw-btn-play" class="btn btn-primary">MULAI MAIN</button>
+                </div>
+            </div>
+
+            <!-- Game Over Modal -->
+            <div id="slw-game-over-screen" class="pzl-overlay hidden" style="background:rgba(192,0,0,0.8)">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-shake">💥</div>
+                    <h2 style="color:var(--danger-light)">TABRAKAN!</h2>
+                    <p style="margin-bottom:20px">Lalu lintas menjadi kacau.</p>
+                    <div class="pzl-result-box">
+                        <p>Skor Anda: <strong id="slw-final-score">0</strong></p>
+                        <p>Skor Tertinggi: <strong id="slw-final-highscore">0</strong></p>
+                    </div>
+                    <button id="slw-btn-restart" class="btn btn-primary">MAIN LAGI</button>
+                </div>
+            </div>
+
+            <!-- Pause Modal -->
+            <div id="slw-pause-screen" class="pzl-overlay hidden">
+                <div class="pzl-modal">
+                    <div style="font-size:50px; margin-bottom:10px">⏸️</div>
+                    <h2>GAME DIJEDA</h2>
+                    <button id="slw-btn-resume" class="btn btn-primary" style="margin-top:20px">LANJUTKAN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    <!-- BUS SCREEN -->
+    <div id="bus-screen" class="screen">
+        <header class="game-header" style="position:absolute; top:0; left:0; width:100%; z-index:50;">
+            <button class="btn-back" onclick="app.quitGame()">✕</button>
+        </header>
+        <div class="h-screen w-screen flex items-center justify-center overflow-hidden p-2 md:p-6 bg-gradient-to-br from-slate-950 to-emerald-950">
+            <!-- Kontainer Utama Game -->
+    <div class="relative w-full max-w-4xl bg-slate-900 rounded-[32px] overflow-hidden border-4 border-emerald-600/30 flex flex-col shadow-2xl">
+        
+        <!-- Header Dashboard Edukasi Premium -->
+        <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex justify-between items-center text-white z-10 shadow-lg">
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-950/40 p-2 rounded-full text-yellow-300 shadow-inner">
+                    <i data-lucide="bus" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bubble text-lg md:text-2xl tracking-wide text-white">SUPIR BUS CILIK</h1>
+                    <p class="text-[9px] md:text-xs font-black text-emerald-100 uppercase tracking-widest">Belajar Disiplin & Etika Berkendara</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Skor, SIM & Kecepatan -->
+            <div class="flex items-center gap-4 md:gap-6 text-white font-bubble">
+                <div class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 border border-white/10 shadow-inner">
+                    <i data-lucide="star" class="text-yellow-400 w-4 h-4 fill-yellow-400"></i>
+                    <span id="bus-score-display" class="text-xs md:text-sm">Bintang: 0</span>
+                </div>
+                <div class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 border border-white/10 shadow-inner">
+                    <i data-lucide="shield-check" class="text-emerald-400 w-4 h-4"></i>
+                    <span id="bus-points-display" class="text-xs md:text-sm">Poin SIM: 3</span>
+                </div>
+                <div id="speedo-container" class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex flex-col items-center justify-center border border-white/10 min-w-[85px] shadow-inner transition-colors duration-300">
+                    <span class="text-[8px] font-sans text-slate-300 font-bold uppercase tracking-wider">Spedo</span>
+                    <span id="bus-speedo-display" class="text-xs md:text-sm text-emerald-400">0 km/h</span>
+                </div>
+            </div>
+
+            <!-- Kontrol Audio -->
+            <button id="bus-btn-sound" class="p-2.5 bg-slate-950/50 hover:bg-slate-900/60 active:scale-95 transition-all rounded-xl text-yellow-300 border border-white/10" title="Suara">
+                <i data-lucide="volume-2" id="bus-icon-sound"></i>
+            </button>
+        </div>
+
+        <!-- Area Simulasi Canvas Utama -->
+        <div class="relative w-full aspect-[4/3] bg-emerald-900 flex items-center justify-center overflow-hidden">
+            <!-- Kanvas Simulasi Jalan Utama -->
+            <canvas id="busCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
+
+            <!-- Overlay Menu Utama (Mulai Mengemudi) -->
+            <div id="bus-start-menu" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 transition-all duration-500">
+                <div class="bg-slate-900 border-2 border-emerald-500/30 p-8 rounded-[32px] max-w-md shadow-2xl scale-100 transition-all duration-300">
+                    <div class="w-20 h-20 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                        <i data-lucide="shield-alert" class="w-12 h-12 text-emerald-400"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bubble text-white mb-1">SIM Cilik Mengemudi 🪪</h2>
+                    <p class="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-4">Edisi Tertib & Bebas Pusing</p>
+                    
+                    <p class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">
+                        Bantu jemput anak-anak di halte dan antarkan mereka ke sekolah. Patuhi rambu lalu lintas, kurangi kecepatan, beri jalan kendaraan darurat, dan sayangi sesama makhluk hidup!
+                    </p>
+                    
+                    <!-- Aturan Edukatif Rambu Driver -->
+                    <div class="grid grid-cols-3 gap-2 mb-6 text-[10px] font-extrabold text-slate-200">
+                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
+                            <span class="block text-red-500 text-base mb-1">🚥</span>
+                            Henti Total Saat Lampu Merah
+                        </div>
+                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
+                            <span class="block text-blue-500 text-base mb-1">⚠️ 30</span>
+                            Rem < 30 km/h Lewati Kamera Radar
+                        </div>
+                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
+                            <span class="block text-amber-500 text-base mb-1">🚒 🐈</span>
+                            Minggir untuk Ambulans & Rem untuk Hewan
+                        </div>
+                    </div>
+
+                    <button id="bus-btn-play" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-lg shadow-emerald-950/30 tracking-wider text-base">
+                        SAYA SIAP BERKENDARA! 🚌
+                    </button>
+                </div>
+            </div>
+
+            <!-- Balon Panduan Mengapung (Sangat Halus & Tenang) -->
+            <div id="bus-tutorial-bubble" class="absolute top-4 left-4 bg-slate-900/95 border border-emerald-500/30 px-4 py-3 rounded-2xl text-xs text-slate-200 font-bold max-w-[280px] shadow-lg pointer-events-none transition-all duration-300">
+                💡 <span class="text-emerald-400 font-bubble">Misi Utama:</span> Tekan tombol <b class="text-emerald-400">GAS</b> atau tombol <b class="text-yellow-400">Panah Atas</b> untuk menjalankan bus. Dekati halte perlahan!
+            </div>
+
+            <!-- Overlay Selesai Rute (Win Screen) -->
+            <div id="bus-win-screen" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 hidden">
+                <div class="bg-slate-900 border-2 border-emerald-500/30 p-8 rounded-[32px] max-w-sm shadow-2xl">
+                    <div class="w-16 h-16 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                        <i data-lucide="award" class="w-8 h-8 text-emerald-400 fill-emerald-400"></i>
+                    </div>
+                    <h2 class="text-2xl font-bubble text-emerald-400 mb-1">PENGEMUDI TELADAN! 🎉</h2>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Semua Siswa Selamat Sampai Tujuan</p>
+                    <p id="bus-win-description" class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">Luar biasa! Mengemudi dengan stabil, selalu mematuhi rambu jalan, dan mendarat di halte dengan sangat halus.</p>
+                    
+                    <button id="bus-btn-next" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md text-sm md:text-base">
+                        ULANGI PERJALANAN! 🌟
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overlay Pelanggaran / Lisensi Dicabut (Lose Screen) -->
+            <div id="bus-lose-screen" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 hidden">
+                <div class="bg-slate-900 border-2 border-red-500/30 p-8 rounded-[32px] max-w-sm shadow-2xl">
+                    <div class="w-16 h-16 bg-red-100/10 border-2 border-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bubble text-red-500 mb-1">SIM KAMU DICABUT! 🛑</h2>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Terlalu Banyak Pelanggaran</p>
+                    <p id="bus-lose-description" class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">Aduh! Anda terpaksa ditilang karena berkendara terlalu kencang atau melanggar lampu merah. Mari belajar tertib lagi!</p>
+                    
+                    <button id="bus-btn-retry" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md text-sm md:text-base">
+                        BELAJAR KEMBALI 💪
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Kontrol Pengemudi (Gas, Rem, Klakson, Setir Lajur) -->
+        <div id="bus-controls-panel" class="bg-slate-950 border-t border-slate-800 p-4 grid grid-cols-4 gap-3 z-10 opacity-40 cursor-not-allowed pointer-events-none transition-all duration-300">
+            <!-- Pindah Lajur Kiri -->
+            <button id="bus-btn-steer-left" class="py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-slate-900 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                <span>◀ LAJUR KIRI</span>
+                <span class="text-[7px] font-sans font-bold text-slate-400 uppercase">Hindari Rintangan</span>
+            </button>
+            
+            <!-- Pedal Rem -->
+            <button id="bus-btn-brake" class="py-4 bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-rose-800 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="circle-dot" class="w-5 h-5"></i>
+                <span>🛑 PEDAL REM</span>
+                <span class="text-[7px] font-sans font-bold text-rose-100 uppercase">Hentikan Bus</span>
+            </button>
+            
+            <!-- Tombol Klakson -->
+            <button id="bus-btn-horn" class="py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-blue-700 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                <span>📯 KLAKSON</span>
+                <span class="text-[7px] font-sans font-bold text-blue-100 uppercase">Beri Peringatan</span>
+            </button>
+
+            <!-- Pedal Gas -->
+            <button id="bus-btn-gas" class="py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="chevrons-up" class="w-5 h-5"></i>
+                <span>⚡ PEDAL GAS</span>
+                <span class="text-[7px] font-sans font-bold text-emerald-950 uppercase">Tahan Untuk Jalan</span>
+            </button>
+        </div>
+    </div>
+
+    </div>
+        </div>
+    </div>
+
     <!-- BADGE NOTIFICATION POPUP -->
     <div id="badge-notification" class="badge-notification hidden">
         <div class="badge-notif-icon">🏅</div>
@@ -271,6 +607,9 @@
     <div id="ui-combo-popup" class="combo-popup hidden">🔥 COMBO! +5</div>
 
     <script src="assets/js/scenarios.js"></script>
+    <script src="assets/js/traffic-puzzle.js"></script>
+    <script src="assets/js/slow-cars.js"></script>
+    <script src="assets/js/bus.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>

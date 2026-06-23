@@ -1,0 +1,60 @@
+
+    <!-- SLOW CARS SCREEN -->
+    <div id="slowcars-screen" class="screen">
+        <div class="puzzle-header">
+            <button class="btn-back" onclick="app.quitGame()">✕</button>
+            <div class="puzzle-title">🚗 SLOW CARS PUZZLE</div>
+            <div class="puzzle-stats">
+                <div class="puzzle-stat-box">
+                    <span>Skor</span>
+                    <strong id="slw-score-display">0</strong>
+                </div>
+                <div class="puzzle-stat-box">
+                    <span>Tertinggi</span>
+                    <strong id="slw-highscore-display" style="color:var(--success)">0</strong>
+                </div>
+            </div>
+            <div class="puzzle-controls">
+                <button id="slw-btn-sound" class="pzl-icon-btn">🔊</button>
+                <button id="slw-btn-pause" class="pzl-icon-btn">⏸️</button>
+            </div>
+        </div>
+        
+        <div class="puzzle-game-area">
+            <canvas id="slowCarsCanvas" width="800" height="600" style="width: 100%; height: auto; max-width: 800px; display: block; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3);"></canvas>
+            
+            <!-- Start Modal -->
+            <div id="slw-start-menu" class="pzl-overlay">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-bounce">🚗</div>
+                    <h2>SLOW CARS</h2>
+                    <p>Atur kecepatan mobil agar tidak tabrakan di persimpangan!</p>
+                    <p style="font-size:12px; margin-bottom:20px">💡 Ketuk mobil untuk mengganti: Normal ➔ Cepat ➔ Berhenti</p>
+                    <button id="slw-btn-play" class="btn btn-primary">MULAI MAIN</button>
+                </div>
+            </div>
+
+            <!-- Game Over Modal -->
+            <div id="slw-game-over-screen" class="pzl-overlay hidden" style="background:rgba(192,0,0,0.8)">
+                <div class="pzl-modal">
+                    <div class="pzl-icon-shake">💥</div>
+                    <h2 style="color:var(--danger-light)">TABRAKAN!</h2>
+                    <p style="margin-bottom:20px">Lalu lintas menjadi kacau.</p>
+                    <div class="pzl-result-box">
+                        <p>Skor Anda: <strong id="slw-final-score">0</strong></p>
+                        <p>Skor Tertinggi: <strong id="slw-final-highscore">0</strong></p>
+                    </div>
+                    <button id="slw-btn-restart" class="btn btn-primary">MAIN LAGI</button>
+                </div>
+            </div>
+
+            <!-- Pause Modal -->
+            <div id="slw-pause-screen" class="pzl-overlay hidden">
+                <div class="pzl-modal">
+                    <div style="font-size:50px; margin-bottom:10px">⏸️</div>
+                    <h2>GAME DIJEDA</h2>
+                    <button id="slw-btn-resume" class="btn btn-primary" style="margin-top:20px">LANJUTKAN</button>
+                </div>
+            </div>
+        </div>
+    </div>

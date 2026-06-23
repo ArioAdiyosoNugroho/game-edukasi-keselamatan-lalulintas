@@ -133,6 +133,8 @@ const app = (function () {
 
     function quitGame() {
         clearInterval(state.timerInterval);
+        if (typeof SlowCars !== 'undefined') SlowCars.quit();
+        if (typeof BusGame !== 'undefined') BusGame.quit();
         showScreen('main-menu');
     }
 
@@ -220,6 +222,30 @@ const app = (function () {
             uiTimer.style.display = 'inline-flex';
         } else {
             uiTimer.style.display = 'none';
+        }
+
+        if (mode === 'puzzle') {
+            showScreen('puzzle-screen');
+            if (typeof TrafficPuzzle !== 'undefined') {
+                TrafficPuzzle.init();
+            }
+            return; // Don't load scenario
+        }
+
+        if (mode === 'slowcars') {
+            showScreen('slowcars-screen');
+            if (typeof SlowCars !== 'undefined') {
+                SlowCars.init();
+            }
+            return;
+        }
+
+        if (mode === 'bus') {
+            showScreen('bus-screen');
+            if (typeof BusGame !== 'undefined') {
+                BusGame.init();
+            }
+            return;
         }
 
         showScreen('game-screen');
