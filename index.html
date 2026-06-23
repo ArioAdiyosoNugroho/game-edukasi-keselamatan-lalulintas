@@ -6,7 +6,12 @@
     <title>LajuAman - Game Edukasi Keselamatan Lalu Lintas</title>
     <meta name="description" content="Game edukasi interaktif keselamatan lalu lintas untuk pelajar Indonesia. Belajar UU No. 22 Tahun 2009 dengan cara yang menyenangkan.">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-        <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false }
+        }
+    </script>
     <!-- Lucide Icons untuk Desain Ikon Modern -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="assets/css/main.css">
@@ -442,9 +447,9 @@
         <header class="game-header" style="position:absolute; top:0; left:0; width:100%; z-index:50;">
             <button class="btn-back" onclick="app.quitGame()">✕</button>
         </header>
-        <div class="h-screen w-screen flex items-center justify-center overflow-hidden p-2 md:p-6 bg-gradient-to-br from-slate-950 to-emerald-950">
+        <div class="h-screen w-screen flex items-center justify-center overflow-hidden md:p-6 bg-gradient-to-br from-slate-950 to-emerald-950">
             <!-- Kontainer Utama Game -->
-    <div class="relative w-full max-w-4xl bg-slate-900 rounded-[32px] overflow-hidden border-4 border-emerald-600/30 flex flex-col shadow-2xl">
+    <div class="relative w-full h-full md:h-auto max-w-4xl bg-slate-900 md:rounded-[32px] overflow-hidden border-0 md:border-4 border-emerald-600/30 flex flex-col md:shadow-2xl">
         
         <!-- Header Dashboard Edukasi Premium -->
         <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex justify-between items-center text-white z-10 shadow-lg">
@@ -454,23 +459,22 @@
                 </div>
                 <div>
                     <h1 class="font-bubble text-lg md:text-2xl tracking-wide text-white">SUPIR BUS CILIK</h1>
-                    <p class="text-[9px] md:text-xs font-black text-emerald-100 uppercase tracking-widest">Belajar Disiplin & Etika Berkendara</p>
                 </div>
             </div>
             
             <!-- Dashboard Skor, SIM & Kecepatan -->
-            <div class="flex items-center gap-4 md:gap-6 text-white font-bubble">
-                <div class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 border border-white/10 shadow-inner">
-                    <i data-lucide="star" class="text-yellow-400 w-4 h-4 fill-yellow-400"></i>
-                    <span id="bus-score-display" class="text-xs md:text-sm">Bintang: 0</span>
+            <div class="flex items-center gap-2 md:gap-6 text-white font-bubble">
+                <div class="bg-slate-950/50 px-2 py-1.5 md:px-3.5 rounded-2xl flex items-center gap-1 border border-white/10 shadow-inner">
+                    <i data-lucide="star" class="text-yellow-400 w-3 h-3 md:w-4 md:h-4 fill-yellow-400"></i>
+                    <span id="bus-score-display" class="text-[10px] md:text-sm">0</span>
                 </div>
-                <div class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 border border-white/10 shadow-inner">
-                    <i data-lucide="shield-check" class="text-emerald-400 w-4 h-4"></i>
-                    <span id="bus-points-display" class="text-xs md:text-sm">Poin SIM: 3</span>
+                <div class="bg-slate-950/50 px-2 py-1.5 md:px-3.5 rounded-2xl flex items-center gap-1 border border-white/10 shadow-inner">
+                    <i data-lucide="shield-check" class="text-emerald-400 w-3 h-3 md:w-4 md:h-4"></i>
+                    <span id="bus-points-display" class="text-[10px] md:text-sm">3</span>
                 </div>
-                <div id="speedo-container" class="bg-slate-950/50 px-3.5 py-1.5 rounded-2xl flex flex-col items-center justify-center border border-white/10 min-w-[85px] shadow-inner transition-colors duration-300">
-                    <span class="text-[8px] font-sans text-slate-300 font-bold uppercase tracking-wider">Spedo</span>
-                    <span id="bus-speedo-display" class="text-xs md:text-sm text-emerald-400">0 km/h</span>
+                <div id="speedo-container" class="bg-slate-950/50 px-2 py-1 md:px-3.5 md:py-1.5 rounded-2xl flex flex-col items-center justify-center border border-white/10 min-w-[50px] md:min-w-[85px] shadow-inner transition-colors duration-300">
+                    <span class="text-[6px] md:text-[8px] font-sans text-slate-300 font-bold uppercase tracking-wider">Spedo</span>
+                    <span id="bus-speedo-display" class="text-[9px] md:text-sm text-emerald-400">0 km/h</span>
                 </div>
             </div>
 
@@ -481,7 +485,7 @@
         </div>
 
         <!-- Area Simulasi Canvas Utama -->
-        <div class="relative w-full aspect-[4/3] bg-emerald-900 flex items-center justify-center overflow-hidden">
+        <div class="relative w-full flex-1 md:aspect-[4/3] bg-emerald-900 flex items-center justify-center overflow-hidden">
             <!-- Kanvas Simulasi Jalan Utama -->
             <canvas id="busCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
 
@@ -559,33 +563,37 @@
         </div>
 
         <!-- Panel Kontrol Pengemudi (Gas, Rem, Klakson, Setir Lajur) -->
-        <div id="bus-controls-panel" class="bg-slate-950 border-t border-slate-800 p-4 grid grid-cols-4 gap-3 z-10 opacity-40 cursor-not-allowed pointer-events-none transition-all duration-300">
+        <div id="bus-controls-panel" class="bg-slate-950 border-t border-slate-800 p-2 md:p-4 grid grid-cols-4 gap-1 md:gap-3 z-10 opacity-40 cursor-not-allowed pointer-events-none transition-all duration-300">
             <!-- Pindah Lajur Kiri -->
-            <button id="bus-btn-steer-left" class="py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-slate-900 flex flex-col items-center justify-center gap-1 shadow-md">
-                <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                <span>◀ LAJUR KIRI</span>
-                <span class="text-[7px] font-sans font-bold text-slate-400 uppercase">Hindari Rintangan</span>
+            <button id="bus-btn-steer-left" class="py-2 md:py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-slate-900 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <span class="hidden md:inline">◀ LAJUR KIRI</span>
+                <span class="md:hidden">◀ KIRI</span>
+                <span class="hidden md:block text-[7px] font-sans font-bold text-slate-400 uppercase">Hindari Rintangan</span>
             </button>
             
             <!-- Pedal Rem -->
-            <button id="bus-btn-brake" class="py-4 bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-rose-800 flex flex-col items-center justify-center gap-1 shadow-md">
-                <i data-lucide="circle-dot" class="w-5 h-5"></i>
-                <span>🛑 PEDAL REM</span>
-                <span class="text-[7px] font-sans font-bold text-rose-100 uppercase">Hentikan Bus</span>
+            <button id="bus-btn-brake" class="py-2 md:py-4 bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-rose-800 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="circle-dot" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <span class="hidden md:inline">🛑 PEDAL REM</span>
+                <span class="md:hidden">🛑 REM</span>
+                <span class="hidden md:block text-[7px] font-sans font-bold text-rose-100 uppercase">Hentikan Bus</span>
             </button>
             
             <!-- Tombol Klakson -->
-            <button id="bus-btn-horn" class="py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-blue-700 flex flex-col items-center justify-center gap-1 shadow-md">
-                <i data-lucide="volume-2" class="w-5 h-5"></i>
-                <span>📯 KLAKSON</span>
-                <span class="text-[7px] font-sans font-bold text-blue-100 uppercase">Beri Peringatan</span>
+            <button id="bus-btn-horn" class="py-2 md:py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-blue-700 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="volume-2" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <span class="hidden md:inline">📯 KLAKSON</span>
+                <span class="md:hidden">📯 KLAKSON</span>
+                <span class="hidden md:block text-[7px] font-sans font-bold text-blue-100 uppercase">Beri Peringatan</span>
             </button>
 
             <!-- Pedal Gas -->
-            <button id="bus-btn-gas" class="py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-2xl text-white font-bubble text-xs border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-1 shadow-md">
-                <i data-lucide="chevrons-up" class="w-5 h-5"></i>
-                <span>⚡ PEDAL GAS</span>
-                <span class="text-[7px] font-sans font-bold text-emerald-950 uppercase">Tahan Untuk Jalan</span>
+            <button id="bus-btn-gas" class="py-2 md:py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-1 shadow-md">
+                <i data-lucide="chevrons-up" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <span class="hidden md:inline">⚡ PEDAL GAS</span>
+                <span class="md:hidden">⚡ GAS</span>
+                <span class="hidden md:block text-[7px] font-sans font-bold text-emerald-950 uppercase">Tahan Untuk Jalan</span>
             </button>
         </div>
     </div>
