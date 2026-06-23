@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LajuAman - Pelopor Keselamatan Lalu Lintas</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-screen" class="screen active">
+        <div class="loader">
+            <div class="traffic-light-loader">
+                <div class="light red"></div>
+                <div class="light yellow"></div>
+                <div class="light green"></div>
+            </div>
+            <h2>Memuat LajuAman...</h2>
+        </div>
+    </div>
+
+    <!-- MAIN MENU SCREEN -->
+    <div id="main-menu" class="screen">
+        <header class="menu-header">
+            <img src="assets/image/maskot.png" alt="Maskot LajuAman" class="menu-maskot">
+            <div class="logo">🚥 LAJUAMAN</div>
+            <p class="tagline">"Jadilah Pelopor Keselamatan"</p>
+        </header>
+        
+        <main class="menu-content">
+            <div class="input-group">
+                <label for="player-name">Nama Pengendara:</label>
+                <input type="text" id="player-name" placeholder="Masukkan nama Anda..." autocomplete="off">
+            </div>
+
+            <div class="menu-buttons">
+                <button id="btn-mode-skenario" class="btn btn-primary" onclick="app.startGame('skenario')">
+                    🚦 Mode Skenario
+                </button>
+                <button id="btn-mode-kuis" class="btn btn-secondary" onclick="app.startGame('kuis')">
+                    📚 Mode Kuis UU
+                </button>
+                <button id="btn-mode-tantangan" class="btn btn-secondary" onclick="app.startGame('tantangan')">
+                    🏁 Mode Tantangan
+                </button>
+                <button id="btn-mode-belajar" class="btn btn-secondary" onclick="app.showBelajar()">
+                    📖 Mode Belajar
+                </button>
+            </div>
+
+            <button id="btn-leaderboard" class="btn btn-outline" onclick="app.showScreen('leaderboard')">
+                🏆 Leaderboard
+            </button>
+        </main>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen">
+        <header class="game-header">
+            <div class="stats">
+                <span id="ui-score">Skor: 0</span> | 
+                <span id="ui-level">Level: Siswa</span> |
+                <span id="ui-timer" style="display:none;">⏱️ 0</span>
+            </div>
+            <div id="ui-combo-popup" class="combo-popup hidden">🔥 COMBO! +5</div>
+        </header>
+
+        <div class="canvas-container">
+            <canvas id="game-canvas"></canvas>
+            <div id="flash-overlay"></div>
+        </div>
+
+        <div class="scenario-panel">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <h3 id="ui-scenario-counter">Skenario 1/15</h3>
+            <p id="ui-scenario-text" class="scenario-text">Memuat skenario...</p>
+            
+            <div id="ui-choices" class="choices-container">
+                <!-- Choices will be injected here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK SCREEN -->
+    <div id="feedback-screen" class="screen">
+        <div class="feedback-card">
+            <h2 id="ui-feedback-title" class="feedback-title">✅ BENAR!</h2>
+            <p id="ui-feedback-points" class="feedback-points">+10 Poin</p>
+            
+            <div class="explanation-box">
+                <h3>📖 PENJELASAN:</h3>
+                <p id="ui-feedback-explanation">Penjelasan hukum di sini.</p>
+                <div class="pasal-tag" id="ui-feedback-pasal">Pasal XX UU 22/2009</div>
+            </div>
+
+            <button class="btn btn-primary btn-large" onclick="app.nextScenario()">➡️ Lanjut</button>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen">
+        <div class="result-card">
+            <h2 class="result-title">🎖️ SELAMAT, <span id="ui-result-name">Pemain</span>!</h2>
+            
+            <div class="result-stats">
+                <p>Total Skor: <strong id="ui-result-score">0</strong></p>
+                <p>Rank: <strong id="ui-result-rank">⭐ Pelopor</strong></p>
+                <p>Akurasi: <strong id="ui-result-accuracy">0/15 (0%)</strong></p>
+            </div>
+
+            <div id="ui-new-badges" class="new-badges-container">
+                <!-- New badges injected here -->
+            </div>
+
+            <div class="result-actions">
+                <button class="btn btn-primary" onclick="app.showScreen('main-menu')">🔄 Main Lagi</button>
+                <button class="btn btn-outline" onclick="app.showScreen('leaderboard')">🏆 Lihat Top</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD SCREEN -->
+    <div id="leaderboard" class="screen">
+        <div class="leaderboard-card">
+            <h2>🏆 PAPAN JUARA</h2>
+            
+            <ul id="ui-leaderboard-list" class="leaderboard-list">
+                <!-- Leaderboard items injected here -->
+            </ul>
+            
+            <div id="ui-leaderboard-current" class="leaderboard-current">
+                <!-- Current player status injected here -->
+            </div>
+
+            <button class="btn btn-outline" onclick="app.showScreen('main-menu')">← Kembali ke Menu</button>
+        </div>
+    </div>
+
+    <!-- BELAJAR SCREEN -->
+    <div id="belajar-screen" class="screen">
+        <div class="belajar-card">
+            <h2>📖 ENSIKLOPEDIA RAMBU</h2>
+            <p class="belajar-subtitle">Pahami rambu-rambu penting sebelum berkendara!</p>
+            
+            <div id="ui-rambu-list" class="rambu-list">
+                <!-- Rambu items injected here -->
+            </div>
+            
+            <button class="btn btn-outline" onclick="app.showScreen('main-menu')">← Kembali ke Menu</button>
+        </div>
+    </div>
+
+    <!-- BADGE NOTIFICATION POPUP (Global) -->
+    <div id="badge-notification" class="badge-notification hidden">
+        <div class="badge-icon">🏅</div>
+        <div class="badge-info">
+            <h4>Badge Baru!</h4>
+            <p id="badge-name-notif">Nama Badge</p>
+        </div>
+    </div>
+
+    <script src="assets/js/scenarios.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
