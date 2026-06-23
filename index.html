@@ -292,27 +292,46 @@
 
     <!-- PUZZLE SCREEN (Traffic Tap Puzzle) -->
     <div id="puzzle-screen" class="screen">
-        <div class="puzzle-header">
-            <button class="btn-back" onclick="app.quitGame()">✕</button>
-            <div class="puzzle-title">🚦 PENGENDALI LALU LINTAS</div>
-            <div class="puzzle-stats">
-                <div class="puzzle-stat-box">
-                    <span>Target</span>
-                    <strong id="pzl-target">0</strong>
+        <div class="h-screen w-screen flex items-center justify-center overflow-hidden md:p-6 bg-gradient-to-br from-cyan-50 to-sky-100">
+            <div class="relative w-full h-full md:h-auto max-w-4xl bg-white md:rounded-[32px] overflow-hidden border-0 md:border-4 border-cyan-300 flex flex-col md:shadow-2xl">
+                
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-cyan-400 to-sky-400 px-3 py-3 md:px-6 md:py-4 flex justify-between items-center text-white z-10 shadow-md">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <button class="bg-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all" onclick="app.quitGame()" title="Tutup Game">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                        <div class="bg-white/30 p-2 md:p-2.5 rounded-full text-yellow-200 shadow-inner hidden md:flex">
+                            <i data-lucide="gamepad-2" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-bubble text-base md:text-xl tracking-wide text-white drop-shadow-sm">PENGENDALI LALU LINTAS</h1>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-1 md:gap-4 text-white font-bubble drop-shadow-sm">
+                        <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex flex-col items-center justify-center border border-white/30 shadow-inner">
+                            <span class="text-[7px] md:text-[8px] font-sans text-cyan-100 font-bold uppercase">Target</span>
+                            <span id="pzl-target" class="text-[10px] md:text-sm">0</span>
+                        </div>
+                        <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex items-center gap-1 border border-white/30 shadow-inner">
+                            <i data-lucide="check-circle" class="text-emerald-100 w-3 h-3 md:w-4 md:h-4"></i>
+                            <span id="pzl-score" class="text-[11px] md:text-sm text-yellow-100">0</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1 md:gap-2">
+                        <button id="pzl-btn-sound" class="p-2 bg-white/20 hover:bg-white/30 active:scale-95 transition-all rounded-xl text-yellow-100 border border-white/30">
+                            🔊
+                        </button>
+                        <button id="pzl-btn-pause" class="p-2 bg-white/20 hover:bg-white/30 active:scale-95 transition-all rounded-xl text-yellow-100 border border-white/30">
+                            ⏸️
+                        </button>
+                    </div>
                 </div>
-                <div class="puzzle-stat-box">
-                    <span>Lolos</span>
-                    <strong id="pzl-score" style="color:var(--success)">0</strong>
-                </div>
-            </div>
-            <div class="puzzle-controls">
-                <button id="pzl-btn-sound" class="pzl-icon-btn">🔊</button>
-                <button id="pzl-btn-pause" class="pzl-icon-btn">⏸️</button>
-            </div>
-        </div>
-        
-        <div class="puzzle-game-area" style="display: flex; align-items: center; justify-content: center; padding: 10px;">
-            <canvas id="puzzleCanvas" width="800" height="600" style="width: 100%; max-width: 800px; height: auto; aspect-ratio: 4/3; object-fit: contain; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 12px;"></canvas>
+                
+                <div class="relative w-full flex-1 md:aspect-[4/3] bg-emerald-900 flex items-center justify-center overflow-hidden">
+                    <canvas id="puzzleCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
             
             <!-- Level Select Overlay -->
             <div id="pzl-level-select" class="pzl-overlay">
@@ -376,33 +395,54 @@
                     <button id="pzl-btn-resume" class="btn btn-primary" style="margin-top:20px">LANJUTKAN</button>
                 </div>
             </div>
+                </div>
+            </div>
         </div>
     </div>
 
     
     <!-- SLOW CARS SCREEN -->
     <div id="slowcars-screen" class="screen">
-        <div class="puzzle-header">
-            <button class="btn-back" onclick="app.quitGame()">✕</button>
-            <div class="puzzle-title">🚗 SLOW CARS PUZZLE</div>
-            <div class="puzzle-stats">
-                <div class="puzzle-stat-box">
-                    <span>Skor</span>
-                    <strong id="slw-score-display">0</strong>
+        <div class="h-screen w-screen flex items-center justify-center overflow-hidden md:p-6 bg-gradient-to-br from-cyan-50 to-sky-100">
+            <div class="relative w-full h-full md:h-auto max-w-4xl bg-white md:rounded-[32px] overflow-hidden border-0 md:border-4 border-cyan-300 flex flex-col md:shadow-2xl">
+                
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-cyan-400 to-sky-400 px-3 py-3 md:px-6 md:py-4 flex justify-between items-center text-white z-10 shadow-md">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <button class="bg-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all" onclick="app.quitGame()" title="Tutup Game">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                        <div class="bg-white/30 p-2 md:p-2.5 rounded-full text-yellow-200 shadow-inner hidden md:flex">
+                            <i data-lucide="car-front" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-bubble text-base md:text-xl tracking-wide text-white drop-shadow-sm">SLOW CARS PUZZLE</h1>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-1 md:gap-4 text-white font-bubble drop-shadow-sm">
+                        <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex flex-col items-center justify-center border border-white/30 shadow-inner">
+                            <span class="text-[7px] md:text-[8px] font-sans text-cyan-100 font-bold uppercase">Skor</span>
+                            <span id="slw-score-display" class="text-[10px] md:text-sm">0</span>
+                        </div>
+                        <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex flex-col items-center justify-center border border-white/30 shadow-inner">
+                            <span class="text-[7px] md:text-[8px] font-sans text-cyan-100 font-bold uppercase">Tertinggi</span>
+                            <span id="slw-highscore-display" class="text-[10px] md:text-sm text-yellow-100">0</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1 md:gap-2">
+                        <button id="slw-btn-sound" class="p-2 bg-white/20 hover:bg-white/30 active:scale-95 transition-all rounded-xl text-yellow-100 border border-white/30">
+                            🔊
+                        </button>
+                        <button id="slw-btn-pause" class="p-2 bg-white/20 hover:bg-white/30 active:scale-95 transition-all rounded-xl text-yellow-100 border border-white/30">
+                            ⏸️
+                        </button>
+                    </div>
                 </div>
-                <div class="puzzle-stat-box">
-                    <span>Tertinggi</span>
-                    <strong id="slw-highscore-display" style="color:var(--success)">0</strong>
-                </div>
-            </div>
-            <div class="puzzle-controls">
-                <button id="slw-btn-sound" class="pzl-icon-btn">🔊</button>
-                <button id="slw-btn-pause" class="pzl-icon-btn">⏸️</button>
-            </div>
-        </div>
-        
-        <div class="puzzle-game-area">
-            <canvas id="slowCarsCanvas" width="800" height="600" style="width: 100%; max-width: 800px; height: auto; aspect-ratio: 4/3; object-fit: contain; display: block; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 12px;"></canvas>
+                
+                <div class="relative w-full flex-1 md:aspect-[4/3] bg-emerald-900 flex items-center justify-center overflow-hidden">
+                    <canvas id="slowCarsCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
             
             <!-- Start Modal -->
             <div id="slw-start-menu" class="pzl-overlay">
@@ -437,6 +477,8 @@
                     <button id="slw-btn-resume" class="btn btn-primary" style="margin-top:20px">LANJUTKAN</button>
                 </div>
             </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -444,43 +486,43 @@
     
     <!-- BUS SCREEN -->
     <div id="bus-screen" class="screen">
-        <header class="game-header" style="position:absolute; top:0; left:0; width:100%; z-index:50;">
-            <button class="btn-back" onclick="app.quitGame()">✕</button>
-        </header>
-        <div class="h-screen w-screen flex items-center justify-center overflow-hidden md:p-6 bg-gradient-to-br from-slate-950 to-emerald-950">
+        <div class="h-screen w-screen flex items-center justify-center overflow-hidden md:p-6 bg-gradient-to-br from-cyan-50 to-sky-100">
             <!-- Kontainer Utama Game -->
-    <div class="relative w-full h-full md:h-auto max-w-4xl bg-slate-900 md:rounded-[32px] overflow-hidden border-0 md:border-4 border-emerald-600/30 flex flex-col md:shadow-2xl">
+    <div class="relative w-full h-full md:h-auto max-w-4xl bg-white md:rounded-[32px] overflow-hidden border-0 md:border-4 border-cyan-300 flex flex-col md:shadow-2xl">
         
         <!-- Header Dashboard Edukasi Premium -->
-        <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex justify-between items-center text-white z-10 shadow-lg">
-            <div class="flex items-center gap-3">
-                <div class="bg-slate-950/40 p-2 rounded-full text-yellow-300 shadow-inner">
+        <div class="bg-gradient-to-r from-cyan-400 to-sky-400 px-3 py-3 md:px-6 md:py-4 flex justify-between items-center text-white z-10 shadow-md">
+            <div class="flex items-center gap-2 md:gap-3">
+                <button class="bg-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center transition-all" onclick="app.quitGame()" title="Tutup Game">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div class="bg-white/30 p-2 md:p-2.5 rounded-full text-yellow-200 shadow-inner hidden md:flex">
                     <i data-lucide="bus" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="font-bubble text-lg md:text-2xl tracking-wide text-white">SUPIR BUS CILIK</h1>
+                    <h1 class="font-bubble text-base md:text-2xl tracking-wide text-white drop-shadow-sm">SUPIR BUS CILIK</h1>
                 </div>
             </div>
             
             <!-- Dashboard Skor, SIM & Kecepatan -->
-            <div class="flex items-center gap-2 md:gap-6 text-white font-bubble">
-                <div class="bg-slate-950/50 px-2 py-1.5 md:px-3.5 rounded-2xl flex items-center gap-1 border border-white/10 shadow-inner">
-                    <i data-lucide="star" class="text-yellow-400 w-3 h-3 md:w-4 md:h-4 fill-yellow-400"></i>
-                    <span id="bus-score-display" class="text-[10px] md:text-sm">0</span>
+            <div class="flex items-center gap-1 md:gap-4 text-white font-bubble drop-shadow-sm">
+                <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex items-center gap-1 border border-white/30 shadow-inner">
+                    <i data-lucide="star" class="text-yellow-300 w-3 h-3 md:w-4 md:h-4 fill-yellow-300"></i>
+                    <span id="bus-score-display" class="text-[11px] md:text-sm">0</span>
                 </div>
-                <div class="bg-slate-950/50 px-2 py-1.5 md:px-3.5 rounded-2xl flex items-center gap-1 border border-white/10 shadow-inner">
-                    <i data-lucide="shield-check" class="text-emerald-400 w-3 h-3 md:w-4 md:h-4"></i>
-                    <span id="bus-points-display" class="text-[10px] md:text-sm">3</span>
+                <div class="bg-white/20 px-2 py-1 md:px-3.5 md:py-1.5 rounded-xl flex items-center gap-1 border border-white/30 shadow-inner">
+                    <i data-lucide="shield-check" class="text-emerald-100 w-3 h-3 md:w-4 md:h-4"></i>
+                    <span id="bus-points-display" class="text-[11px] md:text-sm">3</span>
                 </div>
-                <div id="speedo-container" class="bg-slate-950/50 px-2 py-1 md:px-3.5 md:py-1.5 rounded-2xl flex flex-col items-center justify-center border border-white/10 min-w-[50px] md:min-w-[85px] shadow-inner transition-colors duration-300">
-                    <span class="text-[6px] md:text-[8px] font-sans text-slate-300 font-bold uppercase tracking-wider">Spedo</span>
-                    <span id="bus-speedo-display" class="text-[9px] md:text-sm text-emerald-400">0 km/h</span>
+                <div id="speedo-container" class="bg-white/20 px-2 py-0.5 md:px-3.5 md:py-1.5 rounded-xl flex flex-col items-center justify-center border border-white/30 min-w-[45px] md:min-w-[85px] shadow-inner transition-colors duration-300">
+                    <span class="text-[7px] md:text-[8px] font-sans text-cyan-100 font-bold uppercase tracking-wider">Spedo</span>
+                    <span id="bus-speedo-display" class="text-[10px] md:text-sm text-yellow-100">0 km/h</span>
                 </div>
             </div>
 
             <!-- Kontrol Audio -->
-            <button id="bus-btn-sound" class="p-2.5 bg-slate-950/50 hover:bg-slate-900/60 active:scale-95 transition-all rounded-xl text-yellow-300 border border-white/10" title="Suara">
-                <i data-lucide="volume-2" id="bus-icon-sound"></i>
+            <button id="bus-btn-sound" class="p-2 bg-white/20 hover:bg-white/30 active:scale-95 transition-all rounded-xl text-yellow-100 border border-white/30" title="Suara">
+                <i data-lucide="volume-2" id="bus-icon-sound" class="w-4 h-4 md:w-5 md:h-5"></i>
             </button>
         </div>
 
@@ -490,72 +532,72 @@
             <canvas id="busCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
 
             <!-- Overlay Menu Utama (Mulai Mengemudi) -->
-            <div id="bus-start-menu" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 transition-all duration-500">
-                <div class="bg-slate-900 border-2 border-emerald-500/30 p-8 rounded-[32px] max-w-md shadow-2xl scale-100 transition-all duration-300">
-                    <div class="w-20 h-20 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                        <i data-lucide="shield-alert" class="w-12 h-12 text-emerald-400"></i>
+            <div id="bus-start-menu" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center p-4 md:p-6 text-center z-20 transition-all duration-500">
+                <div class="bg-white border-4 border-cyan-300 p-6 md:p-8 rounded-[32px] max-w-md shadow-2xl scale-100 transition-all duration-300 w-full">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-cyan-100 border-4 border-cyan-400 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4 animate-bounce">
+                        <i data-lucide="shield-alert" class="w-8 h-8 md:w-12 md:h-12 text-cyan-500"></i>
                     </div>
-                    <h2 class="text-2xl md:text-3xl font-bubble text-white mb-1">SIM Cilik Mengemudi 🪪</h2>
-                    <p class="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-4">Edisi Tertib & Bebas Pusing</p>
+                    <h2 class="text-2xl md:text-3xl font-bubble text-cyan-600 mb-1">SIM Cilik Mengemudi</h2>
+                    <p class="text-cyan-500 text-[10px] font-bold uppercase tracking-wider mb-3 md:mb-4">Edisi Tertib & Bebas Pusing</p>
                     
-                    <p class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">
-                        Bantu jemput anak-anak di halte dan antarkan mereka ke sekolah. Patuhi rambu lalu lintas, kurangi kecepatan, beri jalan kendaraan darurat, dan sayangi sesama makhluk hidup!
+                    <p class="text-slate-600 text-[11px] md:text-sm mb-5 leading-relaxed font-bold">
+                        Bantu jemput teman-teman di halte dan antar ke sekolah. Patuhi rambu lalu lintas, kurangi kecepatan, beri jalan kendaraan darurat, dan sayangi hewan!
                     </p>
                     
                     <!-- Aturan Edukatif Rambu Driver -->
-                    <div class="grid grid-cols-3 gap-2 mb-6 text-[10px] font-extrabold text-slate-200">
-                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
-                            <span class="block text-red-500 text-base mb-1">🚥</span>
-                            Henti Total Saat Lampu Merah
+                    <div class="grid grid-cols-3 gap-2 mb-6 text-[9px] md:text-[10px] font-extrabold text-slate-700">
+                        <div class="bg-rose-50 border-2 border-rose-200 p-2 rounded-2xl flex flex-col justify-center">
+                            <span class="block text-red-500 text-lg md:text-xl mb-1">🚥</span>
+                            Henti Total Lampu Merah
                         </div>
-                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
-                            <span class="block text-blue-500 text-base mb-1">⚠️ 30</span>
-                            Rem < 30 km/h Lewati Kamera Radar
+                        <div class="bg-amber-50 border-2 border-amber-200 p-2 rounded-2xl flex flex-col justify-center">
+                            <span class="block text-amber-500 text-lg md:text-xl font-bubble mb-1">30</span>
+                            Rem &lt; 30 km/h di Radar
                         </div>
-                        <div class="bg-slate-950/60 border border-emerald-500/20 p-2.5 rounded-xl">
-                            <span class="block text-amber-500 text-base mb-1">🚒 🐈</span>
-                            Minggir untuk Ambulans & Rem untuk Hewan
+                        <div class="bg-emerald-50 border-2 border-emerald-200 p-2 rounded-2xl flex flex-col justify-center">
+                            <span class="block text-emerald-500 text-lg md:text-xl mb-1">🚒 🐈</span>
+                            Sayangi Sesama Makhluk
                         </div>
                     </div>
 
-                    <button id="bus-btn-play" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-lg shadow-emerald-950/30 tracking-wider text-base">
+                    <button id="bus-btn-play" class="w-full py-3 md:py-4 bg-gradient-to-r from-cyan-400 to-sky-400 hover:from-cyan-300 hover:to-sky-300 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-lg border-b-4 border-sky-500 tracking-wider text-sm md:text-base">
                         SAYA SIAP BERKENDARA! 🚌
                     </button>
                 </div>
             </div>
 
             <!-- Balon Panduan Mengapung (Sangat Halus & Tenang) -->
-            <div id="bus-tutorial-bubble" class="absolute top-4 left-4 bg-slate-900/95 border border-emerald-500/30 px-4 py-3 rounded-2xl text-xs text-slate-200 font-bold max-w-[280px] shadow-lg pointer-events-none transition-all duration-300">
-                💡 <span class="text-emerald-400 font-bubble">Misi Utama:</span> Tekan tombol <b class="text-emerald-400">GAS</b> atau tombol <b class="text-yellow-400">Panah Atas</b> untuk menjalankan bus. Dekati halte perlahan!
+            <div id="bus-tutorial-bubble" class="absolute top-4 left-4 bg-white/95 border border-cyan-200 px-4 py-3 rounded-2xl text-[11px] md:text-xs text-slate-700 font-bold max-w-[280px] shadow-lg pointer-events-none transition-all duration-300">
+                💡 <span class="text-cyan-600 font-bubble">Misi Utama:</span> Tekan tombol <b class="text-emerald-500">GAS</b> atau tombol <b class="text-amber-500">Panah Atas</b> untuk menjalankan bus. Dekati halte perlahan!
             </div>
 
             <!-- Overlay Selesai Rute (Win Screen) -->
-            <div id="bus-win-screen" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 hidden">
-                <div class="bg-slate-900 border-2 border-emerald-500/30 p-8 rounded-[32px] max-w-sm shadow-2xl">
-                    <div class="w-16 h-16 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                        <i data-lucide="award" class="w-8 h-8 text-emerald-400 fill-emerald-400"></i>
+            <div id="bus-win-screen" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-20 hidden">
+                <div class="bg-white border-4 border-emerald-300 p-6 rounded-[32px] max-w-sm shadow-2xl w-full">
+                    <div class="w-16 h-16 bg-emerald-100 border-4 border-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3 animate-bounce">
+                        <i data-lucide="award" class="w-8 h-8 text-emerald-500 fill-emerald-500"></i>
                     </div>
-                    <h2 class="text-2xl font-bubble text-emerald-400 mb-1">PENGEMUDI TELADAN! 🎉</h2>
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Semua Siswa Selamat Sampai Tujuan</p>
-                    <p id="bus-win-description" class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">Luar biasa! Mengemudi dengan stabil, selalu mematuhi rambu jalan, dan mendarat di halte dengan sangat halus.</p>
+                    <h2 class="text-2xl font-bubble text-emerald-500 mb-1">PENGEMUDI TELADAN! 🎉</h2>
+                    <p class="text-emerald-600/70 text-[10px] font-bold uppercase tracking-wider mb-3">Semua Siswa Selamat Sampai Tujuan</p>
+                    <p id="bus-win-description" class="text-slate-600 text-xs md:text-sm mb-5 leading-relaxed font-bold">Luar biasa! Mengemudi dengan stabil, selalu mematuhi rambu jalan, dan mendarat di halte dengan sangat halus.</p>
                     
-                    <button id="bus-btn-next" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md text-sm md:text-base">
+                    <button id="bus-btn-next" class="w-full py-3 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md border-b-4 border-teal-500 text-sm">
                         ULANGI PERJALANAN! 🌟
                     </button>
                 </div>
             </div>
 
             <!-- Overlay Pelanggaran / Lisensi Dicabut (Lose Screen) -->
-            <div id="bus-lose-screen" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 hidden">
-                <div class="bg-slate-900 border-2 border-red-500/30 p-8 rounded-[32px] max-w-sm shadow-2xl">
-                    <div class="w-16 h-16 bg-red-100/10 border-2 border-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+            <div id="bus-lose-screen" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-20 hidden">
+                <div class="bg-white border-4 border-rose-300 p-6 rounded-[32px] max-w-sm shadow-2xl w-full">
+                    <div class="w-16 h-16 bg-rose-100 border-4 border-rose-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-rose-500"></i>
                     </div>
-                    <h2 class="text-2xl font-bubble text-red-500 mb-1">SIM KAMU DICABUT! 🛑</h2>
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Terlalu Banyak Pelanggaran</p>
-                    <p id="bus-lose-description" class="text-slate-300 text-xs md:text-sm mb-6 leading-relaxed font-bold">Aduh! Anda terpaksa ditilang karena berkendara terlalu kencang atau melanggar lampu merah. Mari belajar tertib lagi!</p>
+                    <h2 class="text-2xl font-bubble text-rose-500 mb-1">SIM DICABUT! 🛑</h2>
+                    <p class="text-rose-600/70 text-[10px] font-bold uppercase tracking-wider mb-3">Terlalu Banyak Pelanggaran</p>
+                    <p id="bus-lose-description" class="text-slate-600 text-xs md:text-sm mb-5 leading-relaxed font-bold">Aduh! Anda terpaksa ditilang karena berkendara terlalu kencang atau melanggar lampu merah. Mari belajar tertib lagi!</p>
                     
-                    <button id="bus-btn-retry" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md text-sm md:text-base">
+                    <button id="bus-btn-retry" class="w-full py-3 bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-400 hover:to-red-400 active:scale-[0.98] transition-all text-white font-bubble rounded-2xl shadow-md border-b-4 border-red-600 text-sm">
                         BELAJAR KEMBALI 💪
                     </button>
                 </div>
@@ -563,37 +605,37 @@
         </div>
 
         <!-- Panel Kontrol Pengemudi (Gas, Rem, Klakson, Setir Lajur) -->
-        <div id="bus-controls-panel" class="bg-slate-950 border-t border-slate-800 p-2 md:p-4 grid grid-cols-4 gap-1 md:gap-3 z-10 opacity-40 cursor-not-allowed pointer-events-none transition-all duration-300">
+        <div id="bus-controls-panel" class="bg-sky-50 border-t-2 border-sky-200 p-2 md:p-4 grid grid-cols-4 gap-2 z-10 opacity-40 cursor-not-allowed pointer-events-none transition-all duration-300">
             <!-- Pindah Lajur Kiri -->
-            <button id="bus-btn-steer-left" class="py-2 md:py-4 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-slate-900 flex flex-col items-center justify-center gap-1 shadow-md">
-                <i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5"></i>
+            <button id="bus-btn-steer-left" class="py-2.5 md:py-4 bg-slate-200 hover:bg-slate-300 active:scale-95 transition-all rounded-xl md:rounded-2xl text-slate-700 font-bubble text-[10px] md:text-xs border-b-4 border-slate-400 flex flex-col items-center justify-center gap-1">
+                <i data-lucide="chevron-left" class="w-4 h-4 md:w-5 md:h-5 text-slate-600"></i>
                 <span class="hidden md:inline">◀ LAJUR KIRI</span>
-                <span class="md:hidden">◀ KIRI</span>
-                <span class="hidden md:block text-[7px] font-sans font-bold text-slate-400 uppercase">Hindari Rintangan</span>
+                <span class="md:hidden text-center leading-tight">◀<br>KIRI</span>
+                <span class="hidden md:block text-[8px] font-sans font-bold text-slate-500 uppercase">Hindari Rintangan</span>
             </button>
             
             <!-- Pedal Rem -->
-            <button id="bus-btn-brake" class="py-2 md:py-4 bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-rose-800 flex flex-col items-center justify-center gap-1 shadow-md">
+            <button id="bus-btn-brake" class="py-2.5 md:py-4 bg-rose-500 hover:bg-rose-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[10px] md:text-xs border-b-4 border-rose-700 flex flex-col items-center justify-center gap-1">
                 <i data-lucide="circle-dot" class="w-4 h-4 md:w-5 md:h-5"></i>
                 <span class="hidden md:inline">🛑 PEDAL REM</span>
-                <span class="md:hidden">🛑 REM</span>
-                <span class="hidden md:block text-[7px] font-sans font-bold text-rose-100 uppercase">Hentikan Bus</span>
+                <span class="md:hidden text-center leading-tight">🛑<br>REM</span>
+                <span class="hidden md:block text-[8px] font-sans font-bold text-rose-100 uppercase">Hentikan Bus</span>
             </button>
             
             <!-- Tombol Klakson -->
-            <button id="bus-btn-horn" class="py-2 md:py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-blue-700 flex flex-col items-center justify-center gap-1 shadow-md">
+            <button id="bus-btn-horn" class="py-2.5 md:py-4 bg-amber-400 hover:bg-amber-300 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[10px] md:text-xs border-b-4 border-amber-600 flex flex-col items-center justify-center gap-1">
                 <i data-lucide="volume-2" class="w-4 h-4 md:w-5 md:h-5"></i>
                 <span class="hidden md:inline">📯 KLAKSON</span>
-                <span class="md:hidden">📯 KLAKSON</span>
-                <span class="hidden md:block text-[7px] font-sans font-bold text-blue-100 uppercase">Beri Peringatan</span>
+                <span class="md:hidden text-center leading-tight">📯<br>BUNYI</span>
+                <span class="hidden md:block text-[8px] font-sans font-bold text-amber-100 uppercase">Beri Peringatan</span>
             </button>
 
             <!-- Pedal Gas -->
-            <button id="bus-btn-gas" class="py-2 md:py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[9px] md:text-xs border-b-4 md:border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-1 shadow-md">
+            <button id="bus-btn-gas" class="py-2.5 md:py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl md:rounded-2xl text-white font-bubble text-[10px] md:text-xs border-b-4 border-emerald-700 flex flex-col items-center justify-center gap-1 shadow-md">
                 <i data-lucide="chevrons-up" class="w-4 h-4 md:w-5 md:h-5"></i>
                 <span class="hidden md:inline">⚡ PEDAL GAS</span>
-                <span class="md:hidden">⚡ GAS</span>
-                <span class="hidden md:block text-[7px] font-sans font-bold text-emerald-950 uppercase">Tahan Untuk Jalan</span>
+                <span class="md:hidden text-center leading-tight">⚡<br>GAS</span>
+                <span class="hidden md:block text-[8px] font-sans font-bold text-emerald-100 uppercase">Tahan Untuk Jalan</span>
             </button>
         </div>
     </div>
