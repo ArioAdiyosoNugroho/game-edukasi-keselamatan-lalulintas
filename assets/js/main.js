@@ -283,8 +283,16 @@ const app = (function () {
 
         // Set illustration
         const img = document.getElementById('ui-scenario-img');
-        img.src = sc.gambar || 'assets/image/bg-main.png';
-        img.alt = sc.situasi.substring(0, 60);
+        img.classList.remove('rambu-mode');
+        img.parentElement.classList.remove('rambu-mode');
+        
+        if (state.currentMode === 'kuis') {
+            img.parentElement.style.display = 'none';
+        } else {
+            img.parentElement.style.display = '';
+            img.src = sc.gambar || 'assets/image/bg-main.png';
+            img.alt = sc.situasi.substring(0, 60);
+        }
 
         // Set question
         document.getElementById('ui-scenario-text').textContent = sc.situasi;
@@ -315,15 +323,17 @@ const app = (function () {
         document.getElementById('progress-bar').style.width = `${(state.scenarioIndex / total) * 100}%`;
         document.getElementById('ui-progress-text').textContent = `${state.scenarioIndex + 1}/${total}`;
 
-        // Show large icon as illustration
+        // Show rambu image as illustration
         const img = document.getElementById('ui-scenario-img');
-        img.src = 'assets/image/bg-main.png';
-        img.alt = 'Tebak Rambu';
+        img.classList.add('rambu-mode');
+        img.parentElement.classList.add('rambu-mode');
+        img.parentElement.style.display = '';
+        img.src = rambu.gambar || 'https://placehold.co/400x400/png?text=Rambu';
+        img.alt = rambu.nama;
 
-        // Question with large icon
+        // Question without icon
         document.getElementById('ui-scenario-text').innerHTML = `
-            <div style="text-align:center; font-size: 64px; margin: 10px 0; line-height:1;">${rambu.ikon}</div>
-            <div style="text-align:center; font-weight: 700; font-size: 16px;">Apa arti rambu di atas?</div>
+            <div style="text-align:center; font-weight: 700; font-size: 18px; margin-top: 10px;">Apa arti rambu di atas?</div>
         `;
 
         // Generate choices (1 correct + 3 random wrong)

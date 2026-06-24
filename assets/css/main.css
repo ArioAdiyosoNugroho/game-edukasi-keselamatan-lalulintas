@@ -393,10 +393,25 @@ body {
     overflow: hidden;
     position: relative;
 }
+.scenario-illustration.rambu-mode {
+    max-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #E1F0FF;
+    padding: 10px 0;
+}
 .scenario-img {
     width: 100%; height: 200px;
     object-fit: cover;
     display: block;
+}
+.scenario-img.rambu-mode {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Scenario Panel */
