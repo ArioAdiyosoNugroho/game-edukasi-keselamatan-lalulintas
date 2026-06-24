@@ -36,7 +36,7 @@ const SCENARIOS = [
     {
         id: 1,
         kategori: "etika",
-        gambar: "assets/image/zebra cros.png",
+        gambar: "https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293533/traffic_light_singapore_aesthetic_lololol_enboev.jpg",
         situasi: "Lampu lalu lintas baru saja berubah hijau, tetapi masih ada pejalan kaki yang belum selesai menyeberang di zebra cross.",
         pilihan: [
             { id: "A", teks: "Tekan klakson keras agar pejalan kaki menyingkir" },
@@ -51,7 +51,7 @@ const SCENARIOS = [
     {
         id: 2,
         kategori: "regulasi",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293718/121808364918797788_lton4a.jpg",
         situasi: "Anda sedang berkendara di jalan dua arah. Kendaraan di depan Anda melaju lambat, dan marka jalan di tengah adalah garis putih putus-putus.",
         pilihan: [
             { id: "A", teks: "Boleh menyalip jika dari arah berlawanan aman" },
@@ -66,7 +66,7 @@ const SCENARIOS = [
     {
         id: 3,
         kategori: "distraksi",
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293834/Teaching_Teens_About_Distracted_Driving_in_the_Smartphone_Age_sjytv5.jpg",
         situasi: "Handphone Anda berbunyi keras dan ada pesan masuk yang sangat penting saat Anda mengendarai sepeda motor.",
         pilihan: [
             { id: "A", teks: "Baca pesan sekilas sambil terus melaju" },
@@ -81,7 +81,7 @@ const SCENARIOS = [
     {
         id: 4,
         kategori: "prioritas",
-        gambar: "assets/image/perempatan.png",
+        gambar: "https://res.cloudinary.com/dtjbvmrow/image/upload/v1782294132/ChatGPT_Image_24_Jun_2026_16.41.44_v77v6x.png",
         situasi: "Anda tiba di persimpangan empat jalan yang tidak memiliki lampu lalu lintas. Pada saat bersamaan, ada kendaraan lain di sebelah kiri Anda.",
         pilihan: [
             { id: "A", teks: "Kendaraan yang datang dari cabang persimpangan sebelah kiri mendapat prioritas" },
@@ -96,7 +96,7 @@ const SCENARIOS = [
     {
         id: 5,
         kategori: "keselamatan",
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Helm+SNI",
         situasi: "Jarak sekolah hanya 200 meter dari rumah. Anda hendak ke sekolah naik motor.",
         pilihan: [
             { id: "A", teks: "Tidak perlu pakai helm karena sangat dekat" },
@@ -111,7 +111,7 @@ const SCENARIOS = [
     {
         id: 6,
         kategori: "regulasi",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Parkir+Dekat+Hidran",
         situasi: "Anda sedang mencari tempat parkir di area yang padat dan melihat ruang kosong tepat di depan hidran pemadam kebakaran.",
         pilihan: [
             { id: "A", teks: "Parkir di situ sebentar saja, menyalakan lampu hazard" },
@@ -126,7 +126,7 @@ const SCENARIOS = [
     {
         id: 7,
         kategori: "keselamatan",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Berkendara+Saat+Hujan",
         situasi: "Cuaca tiba-tiba hujan deras. Jalanan menjadi sangat licin dan jarak pandang berkurang.",
         pilihan: [
             { id: "A", teks: "Kurangi kecepatan, nyalakan lampu utama, dan jaga jarak aman" },
@@ -141,7 +141,7 @@ const SCENARIOS = [
     {
         id: 8,
         kategori: "kewajiban kendaraan",
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Lampu+Rem+Mati",
         situasi: "Anda menyadari lampu rem belakang motor Anda putus/mati saat malam hari.",
         pilihan: [
             { id: "A", teks: "Tidak masalah, yang penting lampu depan menyala" },
@@ -156,7 +156,7 @@ const SCENARIOS = [
     {
         id: 9,
         kategori: "jarak aman",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Jarak+Aman",
         situasi: "Kendaraan di depan Anda mendadak mengerem keras.",
         pilihan: [
             { id: "A", teks: "Banting setir ke kiri sekuat tenaga" },
@@ -171,7 +171,7 @@ const SCENARIOS = [
     {
         id: 10,
         kategori: "tanda belok",
-        gambar: "assets/image/perempatan.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Memberi+Lampu+Sein",
         situasi: "Anda hendak berbelok ke kanan di persimpangan yang jaraknya tinggal 10 meter.",
         pilihan: [
             { id: "A", teks: "Nyalakan sein kanan lalu langsung potong jalan" },
@@ -186,7 +186,7 @@ const SCENARIOS = [
     {
         id: 11,
         kategori: "regulasi",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Melewati+Trotoar",
         situasi: "Jalanan sangat macet, tapi trotoar di sebelah kiri kosong dari pejalan kaki.",
         pilihan: [
             { id: "A", teks: "Naik ke trotoar perlahan agar tidak mengganggu" },
@@ -201,7 +201,7 @@ const SCENARIOS = [
     {
         id: 12,
         kategori: "legalitas",
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Belum+Memiliki+SIM",
         situasi: "Teman Anda minta diantar ke pasar, padahal Anda baru usia 16 tahun dan belum memiliki SIM C.",
         pilihan: [
             { id: "A", teks: "Antar saja karena lewat jalan kampung" },
@@ -216,7 +216,7 @@ const SCENARIOS = [
     {
         id: 13,
         kategori: "adaptasi",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Menghindari+Jalan+Berlubang",
         situasi: "Anda sedang melaju dan melihat lubang besar di tengah lajur Anda.",
         pilihan: [
             { id: "A", teks: "Segera banting setir ke kanan tanpa melihat spion" },
@@ -231,7 +231,7 @@ const SCENARIOS = [
     {
         id: 14,
         kategori: "prioritas darurat",
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Mendengar+Sirene+Ambulans",
         situasi: "Terdengar sirene Ambulans meraung dari arah belakang Anda saat jalanan sedang padat.",
         pilihan: [
             { id: "A", teks: "Menepi ke kiri dan memberikan jalan sebisa mungkin" },
@@ -246,7 +246,7 @@ const SCENARIOS = [
     {
         id: 15,
         kategori: "etika",
-        gambar: "assets/image/perempatan.png",
+        gambar: "https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Jalan+Sempit",
         situasi: "Anda berpapasan dengan mobil lain di jalan sempit. Di sisi Anda ada ruang untuk menepi sejenak.",
         pilihan: [
             { id: "A", teks: "Tetap maju di tengah, biar mobil lain yang mundur" },
