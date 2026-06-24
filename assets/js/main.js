@@ -110,6 +110,13 @@ const app = (function () {
         const screen = document.getElementById(screenId);
         if (screen) screen.classList.add('active');
 
+        // Show bottom nav only on dashboard-type screens
+        const bottomNav = document.getElementById('bottom-nav');
+        if (bottomNav) {
+            const showNav = ['main-menu', 'leaderboard', 'badge-screen'].includes(screenId);
+            bottomNav.style.display = showNav ? 'flex' : 'none';
+        }
+
         if (screenId === 'leaderboard') renderLeaderboard();
         if (screenId === 'badge-screen') renderBadges();
         if (screenId === 'main-menu') updateHomeStats();
@@ -567,9 +574,11 @@ const app = (function () {
             const div = document.createElement('div');
             div.className = 'rambu-item';
             div.innerHTML = `
-                <div class="rambu-icon">${r.ikon}</div>
+                <div class="rambu-icon-container" style="display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; flex-shrink: 0;">
+                    <img src="${r.gambar}" alt="${r.nama}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px;">
+                </div>
                 <div class="rambu-info">
-                    <h4>${r.nama}</h4>
+                    <h4>${r.nama} ${r.ikon}</h4>
                     <span>${r.tipe}</span>
                     <p>${r.deskripsi}</p>
                 </div>
@@ -617,16 +626,34 @@ const app = (function () {
             if (state.nama) {
                 document.getElementById('player-name').value = state.nama;
             }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }, 1200);
     };
 
-    // --- Public API ---
+    // --- Full Screen Toggle ---
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    // --- Expose API ---
     return {
-        startGame,
-        nextScenario,
         showScreen,
+        startGame,
+        quitGame,
+        handleAnswer,
+        nextScenario,
         showBelajar,
         showRangkumanUU,
-        quitGame
+        toggleFullScreen
     };
 })();

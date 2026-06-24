@@ -266,7 +266,7 @@ const SCENARIOS = [
 const KUIS_DATA = [
     {
         id: 1,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa kepanjangan dari SIM?",
         pilihan: [
             { id: "A", teks: "Surat Izin Mengemudi" },
@@ -280,7 +280,7 @@ const KUIS_DATA = [
     },
     {
         id: 2,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Berapa batas usia minimal untuk memiliki SIM C?",
         pilihan: [
             { id: "A", teks: "16 Tahun" },
@@ -294,7 +294,7 @@ const KUIS_DATA = [
     },
     {
         id: 3,
-        gambar: "assets/image/zebra cros.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa fungsi utama dari zebra cross?",
         pilihan: [
             { id: "A", teks: "Tempat parkir motor" },
@@ -308,7 +308,7 @@ const KUIS_DATA = [
     },
     {
         id: 4,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Rambu dengan warna dasar merah dan tulisan putih biasanya merupakan rambu...",
         pilihan: [
             { id: "A", teks: "Petunjuk" },
@@ -322,7 +322,7 @@ const KUIS_DATA = [
     },
     {
         id: 5,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa hukuman mengendarai motor tanpa helm SNI?",
         pilihan: [
             { id: "A", teks: "Denda maksimal Rp250.000 atau kurungan 1 bulan" },
@@ -336,7 +336,7 @@ const KUIS_DATA = [
     },
     {
         id: 6,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Marka jalan berwarna kuning membujur tanpa putus di tengah jalan berarti...",
         pilihan: [
             { id: "A", teks: "Boleh mendahului" },
@@ -350,7 +350,7 @@ const KUIS_DATA = [
     },
     {
         id: 7,
-        gambar: "assets/image/perempatan.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Jika terjadi kecelakaan, apa kewajiban pertama pengemudi?",
         pilihan: [
             { id: "A", teks: "Melarikan diri agar tidak dihakimi massa" },
@@ -364,7 +364,7 @@ const KUIS_DATA = [
     },
     {
         id: 8,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa fungsi dari lampu Hazard?",
         pilihan: [
             { id: "A", teks: "Memberi tanda saat hujan deras" },
@@ -378,7 +378,7 @@ const KUIS_DATA = [
     },
     {
         id: 9,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Berapa kecepatan maksimal di kawasan permukiman?",
         pilihan: [
             { id: "A", teks: "30 km/jam" },
@@ -392,7 +392,7 @@ const KUIS_DATA = [
     },
     {
         id: 10,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa yang harus dilakukan saat mendengar sirine pemadam kebakaran?",
         pilihan: [
             { id: "A", teks: "Merapat ke tepi jalan dan memberi prioritas jalan" },
@@ -406,7 +406,7 @@ const KUIS_DATA = [
     },
     {
         id: 11,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Selain SIM dan STNK, kelengkapan apa yang wajib dibawa?",
         pilihan: [
             { id: "A", teks: "KTP" },
@@ -420,7 +420,7 @@ const KUIS_DATA = [
     },
     {
         id: 12,
-        gambar: "assets/image/zebra cros.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Di mana posisi berjalan kaki yang benar jika tidak ada trotoar?",
         pilihan: [
             { id: "A", teks: "Di tengah jalan" },
@@ -434,7 +434,7 @@ const KUIS_DATA = [
     },
     {
         id: 13,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Kendaraan bermotor wajib menyalakan lampu utama pada siang hari untuk...",
         pilihan: [
             { id: "A", teks: "Mobil penumpang" },
@@ -448,7 +448,7 @@ const KUIS_DATA = [
     },
     {
         id: 14,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa yang dilarang saat berada di jalan tol?",
         pilihan: [
             { id: "A", teks: "Berjalan dengan kecepatan 80 km/jam" },
@@ -462,7 +462,7 @@ const KUIS_DATA = [
     },
     {
         id: 15,
-        gambar: "assets/image/perempatan.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Lampu kuning berkedip pada simpang jalan berarti...",
         pilihan: [
             { id: "A", teks: "Berhenti dan tunggu hijau" },
@@ -476,7 +476,7 @@ const KUIS_DATA = [
     },
     {
         id: 16,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Kapan plat nomor (TNKB) harus diganti baru?",
         pilihan: [
             { id: "A", teks: "Setiap 1 tahun" },
@@ -490,7 +490,7 @@ const KUIS_DATA = [
     },
     {
         id: 17,
-        gambar: "assets/image/motorcycle.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Berapa banyak orang yang boleh dibonceng pada sepeda motor?",
         pilihan: [
             { id: "A", teks: "Maksimal 1 orang" },
@@ -504,7 +504,7 @@ const KUIS_DATA = [
     },
     {
         id: 18,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Apa arti rambu berbentuk lingkaran dengan latar biru dan gambar panah lurus?",
         pilihan: [
             { id: "A", teks: "Larangan berjalan lurus" },
@@ -518,7 +518,7 @@ const KUIS_DATA = [
     },
     {
         id: 19,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Alat pemantul cahaya tambahan pada bagian belakang truk berfungsi untuk...",
         pilihan: [
             { id: "A", teks: "Estetika kendaraan" },
@@ -532,7 +532,7 @@ const KUIS_DATA = [
     },
     {
         id: 20,
-        gambar: "assets/image/bg-main.png",
+        gambar: "https://placehold.co/600x400/png?text=Gambar+Kuis",
         situasi: "Mengemudi di bawah pengaruh alkohol diancam dengan hukuman...",
         pilihan: [
             { id: "A", teks: "Tilang Rp100.000" },
@@ -550,14 +550,14 @@ const KUIS_DATA = [
 // ENSIKLOPEDIA RAMBU DATA
 // ============================================================
 const RAMBU_DATA = [
-    { nama: "Dilarang Masuk",       tipe: "Larangan",          ikon: "⛔", deskripsi: "Rambu lingkaran merah dengan garis strip putih mendatar. Semua kendaraan dilarang masuk ke jalan tersebut dari arah rambu dipasang." },
-    { nama: "Dilarang Parkir",      tipe: "Larangan",          ikon: "🅿️🚫", deskripsi: "Rambu lingkaran merah dengan huruf P dicoret. Kendaraan dilarang parkir di area yang ditentukan." },
-    { nama: "Dilarang Berhenti",    tipe: "Larangan",          ikon: "🛑",  deskripsi: "Rambu lingkaran merah dengan huruf S dicoret silang. Kendaraan dilarang berhenti walau sejenak." },
-    { nama: "Zebra Cross",          tipe: "Peringatan",        ikon: "🚸",  deskripsi: "Rambu persegi biru dengan segitiga putih bergambar orang menyeberang. Menunjukkan tempat penyeberangan pejalan kaki." },
-    { nama: "Lampu Lalu Lintas",    tipe: "Peringatan",        ikon: "🚥",  deskripsi: "Rambu belah ketupat kuning bergambar lampu lalu lintas. Memperingatkan ada persimpangan bersinyal di depan." },
-    { nama: "Wajib Lurus",          tipe: "Perintah",          ikon: "⬆️",  deskripsi: "Rambu lingkaran biru dengan panah putih ke atas. Semua kendaraan wajib berjalan lurus." },
-    { nama: "Jalan Licin",          tipe: "Peringatan",        ikon: "⚠️",  deskripsi: "Rambu belah ketupat kuning dengan ikon mobil berkelok. Berhati-hati karena jalanan licin." },
-    { nama: "Banyak Anak-Anak",     tipe: "Peringatan",        ikon: "🚸",  deskripsi: "Rambu belah ketupat kuning dengan ikon dua anak kecil. Area sekolah, kurangi kecepatan." },
-    { nama: "Kecepatan Maks 40",    tipe: "Larangan",          ikon: "4️⃣0️⃣", deskripsi: "Rambu lingkaran putih berbingkai merah dengan angka 40. Dilarang melebihi 40 km/jam." },
-    { nama: "Petunjuk Rumah Sakit",  tipe: "Petunjuk",         ikon: "🏥",  deskripsi: "Rambu persegi biru dengan tanda palang. Menunjukkan lokasi fasilitas kesehatan terdekat." }
+    { nama: "Dilarang Masuk",       tipe: "Larangan",          ikon: "⛔", gambar: "https://placehold.co/400x400/png?text=Dilarang+Masuk", deskripsi: "Rambu lingkaran merah dengan garis strip putih mendatar. Semua kendaraan dilarang masuk ke jalan tersebut dari arah rambu dipasang." },
+    { nama: "Dilarang Parkir",      tipe: "Larangan",          ikon: "🅿️🚫", gambar: "https://placehold.co/400x400/png?text=Dilarang+Parkir", deskripsi: "Rambu lingkaran merah dengan huruf P dicoret. Kendaraan dilarang parkir di area yang ditentukan." },
+    { nama: "Dilarang Berhenti",    tipe: "Larangan",          ikon: "🛑",  gambar: "https://placehold.co/400x400/png?text=Dilarang+Berhenti", deskripsi: "Rambu lingkaran merah dengan huruf S dicoret silang. Kendaraan dilarang berhenti walau sejenak." },
+    { nama: "Zebra Cross",          tipe: "Peringatan",        ikon: "🚸",  gambar: "https://placehold.co/400x400/png?text=Zebra+Cross", deskripsi: "Rambu persegi biru dengan segitiga putih bergambar orang menyeberang. Menunjukkan tempat penyeberangan pejalan kaki." },
+    { nama: "Lampu Lalu Lintas",    tipe: "Peringatan",        ikon: "🚥",  gambar: "https://placehold.co/400x400/png?text=Lampu+Lalu+Lintas", deskripsi: "Rambu belah ketupat kuning bergambar lampu lalu lintas. Memperingatkan ada persimpangan bersinyal di depan." },
+    { nama: "Wajib Lurus",          tipe: "Perintah",          ikon: "⬆️",  gambar: "https://placehold.co/400x400/png?text=Wajib+Lurus", deskripsi: "Rambu lingkaran biru dengan panah putih ke atas. Semua kendaraan wajib berjalan lurus." },
+    { nama: "Jalan Licin",          tipe: "Peringatan",        ikon: "⚠️",  gambar: "https://placehold.co/400x400/png?text=Jalan+Licin", deskripsi: "Rambu belah ketupat kuning dengan ikon mobil berkelok. Berhati-hati karena jalanan licin." },
+    { nama: "Banyak Anak-Anak",     tipe: "Peringatan",        ikon: "🚸",  gambar: "https://placehold.co/400x400/png?text=Banyak+Anak", deskripsi: "Rambu belah ketupat kuning dengan ikon dua anak kecil. Area sekolah, kurangi kecepatan." },
+    { nama: "Kecepatan Maks 40",    tipe: "Larangan",          ikon: "4️⃣0️⃣", gambar: "https://placehold.co/400x400/png?text=Maks+40", deskripsi: "Rambu lingkaran putih berbingkai merah dengan angka 40. Dilarang melebihi 40 km/jam." },
+    { nama: "Petunjuk Rumah Sakit",  tipe: "Petunjuk",         ikon: "🏥",  gambar: "https://placehold.co/400x400/png?text=Rumah+Sakit", deskripsi: "Rambu persegi biru dengan tanda palang. Menunjukkan lokasi fasilitas kesehatan terdekat." }
 ];
