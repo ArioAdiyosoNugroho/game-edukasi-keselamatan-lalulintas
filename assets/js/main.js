@@ -125,9 +125,9 @@ const app = (function () {
     function updateHomeStats() {
         const bar = document.getElementById('player-stats-bar');
         if (state.nama) {
-            bar.style.display = 'flex';
-            document.getElementById('ui-home-level').textContent = `${getLevelIcon()} ${state.currentLevel}`;
-            document.getElementById('ui-home-points').textContent = `⭐ ${state.totalPoin} Poin`;
+            bar.style.display = 'block';
+            document.getElementById('ui-home-level').innerHTML = `<span class="stat-main-icon">${getLevelIcon()}</span><span class="stat-main-text">${state.currentLevel}</span>`;
+            document.getElementById('ui-home-points').innerHTML = `<span class="stat-main-icon">⭐</span><span class="stat-main-text">${state.totalPoin} Poin</span>`;
         } else {
             bar.style.display = 'none';
         }
@@ -135,7 +135,12 @@ const app = (function () {
 
     function getLevelIcon() {
         const lvl = LEVELS.find(l => l.name === state.currentLevel);
-        return lvl ? lvl.ikon : "🎒";
+        const iconSource = lvl ? lvl.ikon : "🎒";
+        
+        if (iconSource.endsWith('.svg') || iconSource.endsWith('.png')) {
+            return `<img src="${iconSource}" class="level-icon-img" alt="Icon">`;
+        }
+        return iconSource;
     }
 
     function quitGame() {

@@ -5,15 +5,17 @@
 // ============================================================
 
 // Level Data
+// Level Data
 const LEVELS = [
-    { name: "Pesepeda",       minPoin: 0,   ikon: "🚲" },
-    { name: "Pejalan Kaki",   minPoin: 20,  ikon: "🚶" },
-    { name: "Siswa",          minPoin: 50,  ikon: "🎒" },
-    { name: "Pelajar",        minPoin: 100, ikon: "📚" },
-    { name: "Pengendara",     minPoin: 200, ikon: "🏍️" },
-    { name: "Pelopor",        minPoin: 350, ikon: "⭐" },
-    { name: "Pahlawan Jalan", minPoin: 500, ikon: "🏆" }
+    { name: "Pesepeda",       minPoin: 0,   ikon: "assets/image/level/pesepeda.svg" },
+    { name: "Pejalan Kaki",   minPoin: 20,  ikon: "assets/image/level/pejalankaki.svg" },
+    { name: "Siswa",          minPoin: 50,  ikon: "assets/image/level/siswa.svg" },
+    { name: "Pelajar",        minPoin: 100, ikon: "assets/image/level/pelajar.svg" },
+    { name: "Pengendara",     minPoin: 200, ikon: "assets/image/level/pengendara.svg" },
+    { name: "Pelopor",        minPoin: 350, ikon: "assets/image/level/pelopor.svg" },
+    { name: "Pahlawan Jalan", minPoin: 500, ikon: "assets/image/level/pahlawanjalan.svg" }
 ];
+
 
 // Badge Data
 const BADGES = [
